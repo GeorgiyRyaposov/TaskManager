@@ -1,0 +1,85 @@
+﻿<Window x:Class="TaskManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="460" Width="1000"
+        DataContext="TaskManagerViewModel" ResizeMode="NoResize">
+
+    <DockPanel LastChildFill="True" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" Width="200" HorizontalAlignment="Left" VerticalAlignment="Stretch"  Margin="0,0,5,0">
+            <Button DockPanel.Dock="Bottom" Command="{Binding AddNewTaskCommand}">Добавить задачу</Button>
+            <TreeView Name="TasksTree" ItemsSource="{Binding TasksModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItemChanged="TasksTree_SelectedItemChanged">
+            <TreeView.ItemContainerStyle>
+                <!-- 
+    This Style binds a TreeViewItem to a TaskManagerViewModel. 
+    -->
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.ItemContainerStyle>
+
+            <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+            
+        </StackPanel>
+        <StackPanel DataContext="{Binding ElementName=TasksTree, Path=SelectedValue}" Orientation="Vertical" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
+            <!--Header-->
+            <DockPanel Width="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,5">
+                <Label>Наименование задачи: </Label>
+                <TextBox Text="{Binding SelectedTask.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"></TextBox>
+            </DockPanel>
+            <!--Performer and status-->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
+                <Label>Исполнитель: </Label>
+                <TextBox Text="{Binding SelectedTask.Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150"></TextBox>
+                <Label>Статус задачи:</Label>
+                <ComboBox ItemsSource="{Binding TaskStatus}" SelectedValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="ID" DisplayMemberPath="Name" Width="150"></ComboBox>
+            </StackPanel>
+            <!--Registration date and complete date-->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">                
+                <Label>Дата регистрации:</Label>
+                <DatePicker SelectedDate="{Binding SelectedTask.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+                <Label>Дата завершения:</Label>
+                <DatePicker SelectedDate="{Binding SelectedTask.CompletionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+            </StackPanel>
+            <!--RunTime-->            
+            <GroupBox Header="Время выполнения задачи">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Label>Фактическое: </Label>
+                <TextBox Text="{Binding SelectedTask.ActualRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></TextBox>
+                <Label>Плановое: </Label>
+                <TextBox Text="{Binding SelectedTask.PlannedRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></TextBox>
+            </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Суммарное время выполнения подзадач">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label>Фактическое: </Label>
+                    <Label Content="{Binding ActualRunTimeTotal, Mode=OneWay}" Width="75"></Label>
+                    <Label>Плановое: </Label>
+                    <Label Content="{Binding PlannedRunTimeTotal, Mode=OneWay}" Width="75"></Label>                
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        <!--Description-->
+        <StackPanel x:Name="Descr">
+            <Label>Описание задачи:</Label>
+            <TextBox Text="{Binding ElementName=TasksTree, Path=SelectedValue.SelectedTask.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AcceptsReturn="True" Height="200"></TextBox>            
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                <Button Margin="2" Command="{Binding AddChildTaskCommand}">Добавить подзадачу</Button>
+                <Button Margin="2"  Command="{Binding RemoveSelectedTaskCommand}">Удалить</Button>
+                <Button Margin="2"  Command="{Binding SaveChangesCommand}">Сохранить изменения</Button>
+            </StackPanel>
+        </StackPanel>
+        
+    </DockPanel>
+</Window>
