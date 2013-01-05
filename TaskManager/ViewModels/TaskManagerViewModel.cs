@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.Objects;
 using System.Linq;
-using System.Text;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using TaskManager.Models;
 using GalaSoft.MvvmLight.Command;
@@ -18,20 +11,12 @@ namespace TaskManager.ViewModels
     class TaskManagerViewModel : ViewModelBase
     {
         #region Fields
-        //private TaskManagerEntities _taskManagerEntities;
 
-        private ICollectionView _coolectionView;
-        private ObservableCollection<Tasks> ParentTasks;
+        private readonly TaskManagerEntities _taskManagerEntities;
+        private readonly ObservableCollection<Tasks> _parentTasks;
         private Tasks _newTask;
-        private ObservableCollection<TasksModel> _tasksModels;
-        
-        public ObservableCollection<TasksModel> TasksModels 
-        {
-            get { return _tasksModels; }
-            set { _tasksModels = value;
-            base.RaisePropertyChanged("TasksModels");
-            } 
-        }
+
+        public ObservableCollection<TasksModel> TasksModels { get; set; }
 
         public TasksModel SelectedTaskModel {get; set; }
 
@@ -57,17 +42,16 @@ namespace TaskManager.ViewModels
         //Constructor
         public TaskManagerViewModel()
         {
-            using (TaskManagerEntities taskManagerEntities = new TaskManagerEntities())
-            {
-                ParentTasks = new ObservableCollection<Tasks>(taskManagerEntities.Tasks.ToList().Where(task => task.ParentID == 0));
-            }
+            _taskManagerEntities = new TaskManagerEntities();
+
+            _parentTasks = new ObservableCollection<Tasks>(_taskManagerEntities.Tasks.ToList().Where(task => task.ParentID == 0));
+
             
             TasksModels = new ObservableCollection<TasksModel>();
-            foreach (Tasks task in ParentTasks)
+            foreach (Tasks task in _parentTasks)
             {
-                TasksModels.Add(new TasksModel(task));
+                TasksModels.Add(new TasksModel(task, _taskManagerEntities));
             }
-            _coolectionView = CollectionViewSource.GetDefaultView(TasksModels);
             AddCommands();
         }
 
@@ -105,7 +89,7 @@ namespace TaskManager.ViewModels
         {
             AddNewTaskCommand = new RelayCommand(AddNewTask);
             SaveChangesCommand = new RelayCommand(SaveChanges);
-            RemoveSelectedTaskCommand = new RelayCommand(RemoveSelectedTask);
+            RemoveSelectedTaskCommand = new RelayCommand(RemoveSelectedTask, RemoveSelectedTaskCanExecute);
             AddChildTaskCommand = new RelayCommand(AddChildTask, AddChildTaskCanExecute);
         }
 
@@ -122,7 +106,10 @@ namespace TaskManager.ViewModels
                               ActualRunTime = 0,
                               Date = DateTime.Now
                           };
-            TasksModels.Add(new TasksModel(_newTask));
+            TasksModels.Add(new TasksModel(_newTask, _taskManagerEntities));
+            
+            _taskManagerEntities.Tasks.AddObject(_newTask);
+            _taskManagerEntities.SaveChanges();
         }
 
         //Save all changes in current entity
@@ -130,49 +117,53 @@ namespace TaskManager.ViewModels
         {
             try
             {
-                using (TaskManagerEntities taskManagerEntities = new TaskManagerEntities())
-                {
-                    if (_newTask != null)
-                    {
-                        taskManagerEntities.Tasks.AddObject(_newTask);
-                        base.RaisePropertyChanged("TasksModels");
-                    }
-                    taskManagerEntities.SaveChanges();
-                }
+                _taskManagerEntities.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw new Exception("Can't save changes" + ex.Message + ex.StackTrace);
+                throw new Exception("Can't save changes\n" + ex.Message + "\n" +ex.StackTrace);
             }
         }
 
 
-        //Removing selected task
+        //Remove selected task
         private void RemoveSelectedTask()
         {
-            if (MessageBox.Show("Do you realy want to remove task :'" + SelectedTaskModel.SelectedTask.Name + "'?",
-  "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Вы действительно хотите удалить задачу:'" + SelectedTaskModel.SelectedTask.Name + "'?",
+                "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (TaskManagerEntities taskManagerEntities = new TaskManagerEntities())
+                Tasks removeTask = _taskManagerEntities.Tasks.FirstOrDefault(task => task.ID == SelectedTaskModel.SelectedTask.ID);
+                _taskManagerEntities.Tasks.DeleteObject(removeTask);
+                try
                 {
-                    Tasks removeTask = taskManagerEntities.Tasks.First(task => task.ID == SelectedTaskModel.SelectedTask.ID);
-                    taskManagerEntities.Tasks.DeleteObject(removeTask);
-                    try
+                    TasksModel tempTask = null;
+                    foreach (TasksModel tasksModel in TasksModels)
                     {
-                        TasksModels.Remove(TasksModels.FirstOrDefault(task => task.SelectedTask.ID == SelectedTaskModel.SelectedTask.ID));
-                        taskManagerEntities.SaveChanges();
-                        base.RaisePropertyChanged("TasksModels");
+                        tempTask = tasksModel.GetTaskById(tasksModel.Children, SelectedTaskModel.SelectedTask.ID);
+                        if (tempTask != null)
+                            TasksModels.Remove(tempTask);
                     }
-
-                    catch
-                        (Exception ex)
-                    {
-                        throw new Exception("Can't remove selected task\n" + ex.Message);
-                    }
+                    //TasksModels.Remove(TasksModels.FirstOrDefault(task => task.SelectedTask.ID == SelectedTaskModel.SelectedTask.ID));
+                    _taskManagerEntities.SaveChanges();
+                    base.RaisePropertyChanged("TasksModels");
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception("Can't remove selected task\n" + ex.Message);
                 }
             }
         }
 
+        private bool RemoveSelectedTaskCanExecute()
+        {
+            if (SelectedTaskModel == null)
+                return false;
+            if (SelectedTaskModel.Children.Count > 0)
+                return false;
+            return true;
+        }
+
+        //Add child task to selected task
         private void AddChildTask()
         {
             _newTask = new Tasks
@@ -182,15 +173,22 @@ namespace TaskManager.ViewModels
                               Performer = "",
                               PlannedRunTime = 0,
                               StatusID = 1,
-                              ActualRunTime = 0,
+                              ActualRunTime = 0,                              
                               Date = DateTime.Now
                           };
-            TasksModels.Add(new TasksModel(_newTask));
+            TasksModel parentModel = null;
+            foreach (TasksModel tasksModel in TasksModels)
+            {
+                parentModel = tasksModel.GetTaskById(tasksModel.Children, SelectedTaskModel.SelectedTask.ID);
+            }
+            if (parentModel != null)
+                parentModel.Children.Add(new TasksModel(_newTask, _taskManagerEntities));
+            _taskManagerEntities.SaveChanges();
         }
 
         private bool AddChildTaskCanExecute()
         {
-            if (_coolectionView.CurrentItem == null)
+            if (SelectedTaskModel == null)
                 return false;
             return true;
         }

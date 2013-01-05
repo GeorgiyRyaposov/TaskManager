@@ -43,7 +43,7 @@
                 <Label>Исполнитель: </Label>
                 <TextBox Text="{Binding SelectedTask.Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150"></TextBox>
                 <Label>Статус задачи:</Label>
-                <ComboBox ItemsSource="{Binding TaskStatus}" SelectedValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="ID" DisplayMemberPath="Name" Width="150"></ComboBox>
+                <ComboBox ItemsSource="{Binding TaskStatusList}" SelectedValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="ID" DisplayMemberPath="Name" Width="150"></ComboBox>
             </StackPanel>
             <!--Registration date and complete date-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">                

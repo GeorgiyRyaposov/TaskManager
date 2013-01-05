@@ -1,51 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using GalaSoft.MvvmLight.Command;
 
 namespace TaskManager.Models
 {
     class TasksModel : INotifyPropertyChanged
     {
         #region Data
-        private TaskManagerEntities taskManagerEntities;
-        private ObservableCollection<TasksModel> _children;
-        private ObservableCollection<Tasks> _childrenList;
         
-        private TasksModel _parent;
+        private readonly ObservableCollection<Tasks> _childrenList;
+        private readonly TasksModel _parent;
         private Tasks _task;
 
-        public ObservableCollection<Status> TaskStatus { get; set; }
+        public ObservableCollection<Status> TaskStatusList { get; set; }
+        public ObservableCollection<TasksModel> Children { get; set; }
 
         bool _isExpanded = true;
-        bool _isSelected;
+        bool _isSelected = true;
 
         #endregion // Data
 
         #region Constructors
 
-        public TasksModel(Tasks task)
-            : this(task, null)
+        public TasksModel(Tasks task, TaskManagerEntities taskManagerEntities)
+            : this(task, null, taskManagerEntities)
         {
         }
 
-        public TasksModel(Tasks task, TasksModel parent)
+        public TasksModel(Tasks task, TasksModel parent, TaskManagerEntities taskManagerEntities)
         {
             SelectedTask = task;
             _parent = parent;
+            UpdateStatusList();
             
-            taskManagerEntities = new TaskManagerEntities();
-            if(SelectedTask.StatusID == 1)
-                TaskStatus = new ObservableCollection<Status>(taskManagerEntities.Status.ToList().Where(status => status.ID < 4));
-            else
-                TaskStatus = new ObservableCollection<Status>(taskManagerEntities.Status.ToList());
             
             //Gets all child items of current task
-            _children = new ObservableCollection<TasksModel>();
+            Children = new ObservableCollection<TasksModel>();
             
             _childrenList =
                 new ObservableCollection<Tasks>(
@@ -55,7 +45,7 @@ namespace TaskManager.Models
             if (_childrenList.Count > 0)
                 foreach (Tasks child in _childrenList)
                 {
-                    _children.Add(new TasksModel(child, this));
+                    Children.Add(new TasksModel(child, this, taskManagerEntities));
                 }
         }
 
@@ -63,10 +53,7 @@ namespace TaskManager.Models
 
         #region Task Properties
 
-        public ObservableCollection<TasksModel> Children
-        {
-            get { return _children; }
-        }
+        
 
         public string Name
         {
@@ -77,34 +64,51 @@ namespace TaskManager.Models
 
         public short Status
         {
-            get { return SelectedTask.StatusID; }
+            get
+            {
+                UpdateStatusList();
+                return SelectedTask.StatusID;
+            }
             set
             {
-                if ((value == 4) && (SelectedTask.StatusID != 1) && (CheckStatus(_children)))
+                
+                if (value == 4)
                 {
-                    SetCompleteStatus(_children);
-                    SelectedTask.StatusID = value;
+                    if ((SelectedTask.StatusID != 1) && (CheckStatus(Children)))
+                    {
+                        SetCompleteStatus(Children);
+                        SelectedTask.StatusID = value;
+                    }
+                    else
+                        return;
                 }
                 else
                 {
-                    return;
+                    SelectedTask.StatusID = value;
                 }
-                SelectedTask.StatusID = value;
+                
                 OnPropertyChanged("Status");
             }
         }
 
         public int PlannedRunTimeTotal
         {
-            get { return (CountPlannedRunTimeSum(Children)+_task.PlannedRunTime.Value); }
+            get {
+                if (_task.PlannedRunTime != null)
+                    return (CountPlannedRunTimeSum(Children) +_task.PlannedRunTime.Value);
+                return CountPlannedRunTimeSum(Children);
+            }
         }
 
         public int ActualRunTimeTotal
         {
-            get { return (CountActualRunTimeSum(Children) + _task.ActualRunTime.Value); }
+            get 
+            { 
+                if (_task.ActualRunTime != null) 
+                    return (CountActualRunTimeSum(Children) + _task.ActualRunTime.Value);
+                return CountActualRunTimeSum(Children);
+            }
         }
-        
-
 
         public Tasks SelectedTask
         {
@@ -134,7 +138,7 @@ namespace TaskManager.Models
                 if (value != _isExpanded)
                 {
                     _isExpanded = value;
-                    this.OnPropertyChanged("IsExpanded");
+                    OnPropertyChanged("IsExpanded");
                 }
 
                 // Expand all the way up to the root.
@@ -215,30 +219,43 @@ namespace TaskManager.Models
 
         #region Methods
 
+        //Check status of all child tasks
         private bool CheckStatus(ObservableCollection<TasksModel> children)
         {
             if (children.Count > 0)
             {
-                foreach (TasksModel child in children)
+                foreach (TasksModel tasksModel in children)
                 {
-                    if (CheckStatus(child.Children) == false)
+                    if (CheckStatus(tasksModel.Children) == false)
                         return false;
-                    if (child.Status == 1)
+                    if (tasksModel.Status == 1)
                         return false;
                 }
-
             }
             return true;
         }
 
+        //Update items of Status combobox
+        private void UpdateStatusList()
+        {
+            using (TaskManagerEntities taskStatusEntities = new TaskManagerEntities())
+            {
+                if (SelectedTask.StatusID == 1)
+                    TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList().Where(status => status.ID < 4));
+                else
+                    TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList());
+            }
+        }
+
+        //Set 'Complete' status to all child tasks
         private void SetCompleteStatus(ObservableCollection<TasksModel> children)
         {
             if (children.Count > 0)
             {
-                foreach (TasksModel child in children)
+                foreach (TasksModel tasksModel in children)
                 {
-                    SetCompleteStatus(child.Children);
-                    child.SelectedTask.StatusID = 4;
+                    SetCompleteStatus(tasksModel.Children);
+                    tasksModel.SelectedTask.StatusID = 4;
                 }
             }
         }
@@ -277,6 +294,20 @@ namespace TaskManager.Models
             return sum;
         }
 
+        //Gets TaskModel by task id
+        public TasksModel GetTaskById(ObservableCollection<TasksModel> taskModels, int id)
+        {
+            TasksModel tempModel = taskModels.FirstOrDefault(model => model.SelectedTask.ID == id);
+            if (tempModel != null)
+                return tempModel;
+            
+            foreach (TasksModel tasksModel in taskModels)
+            {
+                return GetTaskById(tasksModel.Children, id);
+            }
+            return null;
+        }
+
         #endregion
 
         #region INotifyPropertyChanged Members
@@ -285,8 +316,8 @@ namespace TaskManager.Models
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion // INotifyPropertyChanged Members
