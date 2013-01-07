@@ -118,48 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActualRunTime" xml:space="preserve">
-    <value>Фактическое: </value>
+    <value>Actual: </value>
   </data>
   <data name="AddChildTask" xml:space="preserve">
-    <value>Добавить подзадачу</value>
+    <value>Add child task</value>
   </data>
   <data name="AddTask" xml:space="preserve">
-    <value>Добавить задачу</value>
+    <value>Add task</value>
   </data>
   <data name="ChildTaskRunTime" xml:space="preserve">
-    <value>Суммарное время выполнения подзадач</value>
+    <value>Total runtime of subtasks</value>
   </data>
   <data name="CompleteDate" xml:space="preserve">
-    <value>Дата завершения: </value>
+    <value>Complete date: </value>
   </data>
   <data name="DescriptionOfTask" xml:space="preserve">
-    <value>Описание: </value>
+    <value>Description: </value>
   </data>
   <data name="PerformerName" xml:space="preserve">
-    <value>Исполнитель: </value>
+    <value>Performer: </value>
   </data>
   <data name="PlannedRunTime" xml:space="preserve">
-    <value>Плановое: </value>
+    <value>Planned: </value>
   </data>
   <data name="RegistrationDate" xml:space="preserve">
-    <value>Дата регистрации: </value>
+    <value>Registration date: </value>
   </data>
   <data name="RemoveTask" xml:space="preserve">
-    <value>Удалить</value>
+    <value>Remove</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Сохранить изменения</value>
+    <value>Save changes</value>
   </data>
   <data name="TaskName" xml:space="preserve">
-    <value>Наименование задачи: </value>
+    <value>Task name: </value>
   </data>
   <data name="TaskRunTime" xml:space="preserve">
-    <value>Время выполнения задачи</value>
+    <value>Task runtime</value>
   </data>
   <data name="TaskStatus" xml:space="preserve">
-    <value>Статус: </value>
+    <value>Status: </value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Управление задачами</value>
+    <value>Task manager</value>
   </data>
 </root>

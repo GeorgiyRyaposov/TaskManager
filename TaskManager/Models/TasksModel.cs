@@ -33,7 +33,6 @@ namespace TaskManager.Models
             _parent = parent;
             UpdateStatusList();
             
-            
             //Gets all child items of current task
             Children = new ObservableCollection<TasksModel>();
             
@@ -300,12 +299,8 @@ namespace TaskManager.Models
             TasksModel tempModel = taskModels.FirstOrDefault(model => model.SelectedTask.ID == id);
             if (tempModel != null)
                 return tempModel;
-            
-            foreach (TasksModel tasksModel in taskModels)
-            {
-                return GetTaskById(tasksModel.Children, id);
-            }
-            return null;
+
+            return taskModels.Select(tasksModel => GetTaskById(tasksModel.Children, id)).FirstOrDefault();
         }
 
         #endregion

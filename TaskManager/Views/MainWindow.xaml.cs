@@ -12,6 +12,7 @@ namespace TaskManager.Views
         private TaskManagerViewModel taskManagerViewModel;
         public MainWindow()
         {
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
             InitializeComponent();
             taskManagerViewModel = new TaskManagerViewModel();
             DataContext = taskManagerViewModel;
