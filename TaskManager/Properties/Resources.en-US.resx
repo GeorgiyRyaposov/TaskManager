@@ -150,6 +150,9 @@
   <data name="SaveChanges" xml:space="preserve">
     <value>Save changes</value>
   </data>
+  <data name="StatusNotFound" xml:space="preserve">
+    <value>Status is not found</value>
+  </data>
   <data name="TaskName" xml:space="preserve">
     <value>Task name: </value>
   </data>

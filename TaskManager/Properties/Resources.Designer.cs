@@ -160,6 +160,15 @@ namespace TaskManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Статус не найден.
+        /// </summary>
+        public static string StatusNotFound {
+            get {
+                return ResourceManager.GetString("StatusNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Наименование задачи: .
         /// </summary>
         public static string TaskName {

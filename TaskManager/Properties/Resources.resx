@@ -150,6 +150,9 @@
   <data name="SaveChanges" xml:space="preserve">
     <value>Сохранить изменения</value>
   </data>
+  <data name="StatusNotFound" xml:space="preserve">
+    <value>Статус не найден</value>
+  </data>
   <data name="TaskName" xml:space="preserve">
     <value>Наименование задачи: </value>
   </data>

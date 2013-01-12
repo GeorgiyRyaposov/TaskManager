@@ -22,7 +22,7 @@ namespace TaskManager
                     return status.ToString(CultureInfo.InvariantCulture);
                 }
             }
-            return "Статус не найден";
+            return Properties.Resources.StatusNotFound;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

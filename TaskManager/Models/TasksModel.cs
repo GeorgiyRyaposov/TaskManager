@@ -1,16 +1,19 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using TaskManager.ViewModels;
 
 namespace TaskManager.Models
 {
-    class TasksModel : INotifyPropertyChanged
+    class TasksModel : INotifyPropertyChanged, IDataErrorInfo
     {
         #region Data
         
         private readonly ObservableCollection<Tasks> _childrenList;
         private readonly TasksModel _parent;
         private Tasks _task;
+        private short _newTaskStatus;
 
         public ObservableCollection<Status> TaskStatusList { get; set; }
         public ObservableCollection<TasksModel> Children { get; set; }
@@ -52,8 +55,6 @@ namespace TaskManager.Models
 
         #region Task Properties
 
-        
-
         public string Name
         {
             get { return SelectedTask.Name; }
@@ -70,23 +71,24 @@ namespace TaskManager.Models
             }
             set
             {
-                
+                _newTaskStatus = value;
                 if (value == 4)
                 {
-                    if ((SelectedTask.StatusID != 1) && (CheckStatus(Children)))
+                    if (CheckStatus(Children))
                     {
                         SetCompleteStatus(Children);
                         SelectedTask.StatusID = value;
+                        OnPropertyChanged("Status");
                     }
-                    else
-                        return;
+
                 }
                 else
                 {
                     SelectedTask.StatusID = value;
+                    OnPropertyChanged("Status");
                 }
                 
-                OnPropertyChanged("Status");
+                
             }
         }
 
@@ -117,6 +119,11 @@ namespace TaskManager.Models
                 _task = value;
                 OnPropertyChanged("SelectedTask");
             }
+        }
+
+        public TasksModel Parent
+        {
+            get { return _parent; }
         }
 
         #endregion // Person Properties
@@ -162,6 +169,7 @@ namespace TaskManager.Models
                 if (value != _isSelected)
                 {
                     _isSelected = value;
+                    TaskManagerViewModel.SelectedTaskModel = this;
                     OnPropertyChanged("IsSelected");
                 }
             }
@@ -169,50 +177,52 @@ namespace TaskManager.Models
 
 
         #endregion // IsSelected
-        
-        #region Parent
 
-        public TasksModel Parent
+        #region Error validation
+
+        public string Error
         {
-            get { return _parent; }
+            get { throw new NotImplementedException(); }
+        }
+        
+        public string this[string propertyName]
+        {
+            get
+            {
+                string validationResult = null;
+                switch (propertyName)
+                {
+                    case "Status":
+                        validationResult = ValidateStatus();
+                        break;
+                    case "Name":
+                        validationResult = ValidateName();
+                        break;
+                    default:
+                        throw new ApplicationException("Unknow property being validated on status");
+                }
+                return validationResult;
+            }
+        }
+        //Validate Task name
+        private string ValidateName()
+        {
+            if (String.IsNullOrEmpty(Name))
+                return "Введите имя задачи";
+
+            return String.Empty;
         }
 
-        #endregion // Parent
+        //Validate Task status
+        private string ValidateStatus()
+        {
+            if ((_newTaskStatus == 4) && (CheckStatus(Children) == false))
+                return "Задача не может быть переведена в статус\n'Завершена', т.к. одна из подзадач не завершена.";
 
-        //#region Error validation
+            return String.Empty;
+        }
 
-        //public string Error
-        //{
-        //    get { throw new NotImplementedException(); }
-        //}
-
-
-        //public string this[string propertyName]
-        //{
-        //    get
-        //    {
-        //        string validationResult = null;
-        //        switch (propertyName)
-        //        {
-        //            case "Status":
-        //                validationResult = ValidateStatus();
-        //                break;
-        //            default:
-        //                throw new ApplicationException("Unknow property being validated on status");
-        //        }
-        //        return validationResult;
-        //    }
-        //}
-
-        //private string ValidateStatus()
-        //{
-        //    if (Status == 4 && SelectedTask.StatusID == 1)
-        //        return "Задача не может быть переведена в статус 'Завершена', т.к. она не выполнялась.";
-
-        //    return String.Empty;
-        //}
-
-        //#endregion
+        #endregion // Error validation
 
         #endregion // Presentation Members
 
@@ -239,7 +249,7 @@ namespace TaskManager.Models
         {
             using (TaskManagerEntities taskStatusEntities = new TaskManagerEntities())
             {
-                if (SelectedTask.StatusID == 1)
+                if(SelectedTask.StatusID == 1)
                     TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList().Where(status => status.ID < 4));
                 else
                     TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList());

@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interactivity;
 using GalaSoft.MvvmLight;
 using TaskManager.Models;
 using GalaSoft.MvvmLight.Command;
@@ -15,29 +17,11 @@ namespace TaskManager.ViewModels
         private readonly TaskManagerEntities _taskManagerEntities;
         private readonly ObservableCollection<Tasks> _parentTasks;
         private Tasks _newTask;
-
+        
         public ObservableCollection<TasksModel> TasksModels { get; set; }
-
-        public TasksModel SelectedTaskModel {get; set; }
+        public static TasksModel SelectedTaskModel {get; set; }
 
         #endregion
-        //public string Error
-        //{
-        //    get
-        //    {
-        //        return (CurrentTaskModel as IDataErrorInfo).Error;
-        //    }
-        //}
-
-        //public string this[string columnName]
-        //{
-        //    get 
-        //    {
-        //        string error = (CurrentTaskModel as IDataErrorInfo)[columnName];
-        //        CommandManager.InvalidateRequerySuggested();
-        //        return error;
-        //    }
-        //}
 
         //Constructor
         public TaskManagerViewModel()
@@ -46,12 +30,12 @@ namespace TaskManager.ViewModels
 
             _parentTasks = new ObservableCollection<Tasks>(_taskManagerEntities.Tasks.ToList().Where(task => task.ParentID == 0));
 
-            
             TasksModels = new ObservableCollection<TasksModel>();
             foreach (Tasks task in _parentTasks)
             {
                 TasksModels.Add(new TasksModel(task, _taskManagerEntities));
             }
+
             AddCommands();
         }
 
@@ -121,7 +105,7 @@ namespace TaskManager.ViewModels
             }
             catch (Exception ex)
             {
-                throw new Exception("Can't save changes\n" + ex.Message + "\n" +ex.StackTrace);
+                throw new Exception("Не удалось сохранить изменения\n" + ex.Message + "\n" +ex.StackTrace);
             }
         }
 
@@ -149,7 +133,7 @@ namespace TaskManager.ViewModels
                 }
                 catch(Exception ex)
                 {
-                    throw new Exception("Can't remove selected task\n" + ex.Message);
+                    throw new Exception("Не удалось удалить выбраную задачу\n" + ex.Message);
                 }
             }
         }
@@ -173,7 +157,7 @@ namespace TaskManager.ViewModels
                               Performer = "",
                               PlannedRunTime = 0,
                               StatusID = 1,
-                              ActualRunTime = 0,                              
+                              ActualRunTime = 0,
                               Date = DateTime.Now
                           };
             TasksModel parentModel = null;
