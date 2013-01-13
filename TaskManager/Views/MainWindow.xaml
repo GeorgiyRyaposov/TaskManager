@@ -42,8 +42,9 @@
                 <!-- This Style binds a TreeViewItem to a TaskManagerViewModel. -->
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Setter Property="FontWeight" Value="Normal" />
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="FontWeight" Value="Bold" />
@@ -59,13 +60,13 @@
                                         DockPanel.Dock="Left" 
                                         Width="10" Height="10" 
                                         VerticalAlignment="Center" 
-                                        Stroke="#40000000" StrokeThickness="2" Fill="{Binding Path=SelectedTask.StatusID, Converter={StaticResource StatusColorConverter}}">
+                                        Stroke="#40000000" StrokeThickness="2" Fill="{Binding Path=Task.StatusID, Converter={StaticResource StatusColorConverter}}">
                             </Ellipse>
                             <TextBlock>
                                     <TextBlock.Text>
                                          <MultiBinding StringFormat="{}{0} - {1}">
                                             <Binding Path="Name"></Binding>
-                                            <Binding Path="SelectedTask.StatusID" Converter="{StaticResource StatusConverter}"></Binding>
+                                            <Binding Path="Task.StatusID" Converter="{StaticResource StatusConverter}"></Binding>
                                          </MultiBinding>
                                     </TextBlock.Text>
                             </TextBlock>
@@ -84,25 +85,25 @@
             <!--Performer and status-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
                 <Label Content="{x:Static res:Resources.PerformerName}"></Label>
-                <TextBox Text="{Binding SelectedTask.Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150"></TextBox>
+                <TextBox Text="{Binding Task.Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150"></TextBox>
                 <Label Content="{x:Static res:Resources.TaskStatus}"></Label>
                 <ComboBox Validation.ErrorTemplate="{StaticResource DefaultErrorTemplate}" ItemsSource="{Binding TaskStatusList}" SelectedValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True}" SelectedValuePath="ID" DisplayMemberPath="Name" Width="150"></ComboBox>
             </StackPanel>
             <!--Registration date and complete date-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
                 <Label Content="{x:Static res:Resources.RegistrationDate}"></Label>
-                <DatePicker SelectedDate="{Binding SelectedTask.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+                <DatePicker SelectedDate="{Binding Task.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
                 <Label Content="{x:Static res:Resources.CompleteDate}"></Label>
-                <DatePicker SelectedDate="{Binding SelectedTask.CompletionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+                <DatePicker SelectedDate="{Binding Task.CompletionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
             </StackPanel>
 
             <!--RunTime-->
             <GroupBox Header="{x:Static res:Resources.TaskRunTime}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Label Content="{x:Static res:Resources.ActualRunTime}"/>
-                <TextBox Validation.ErrorTemplate="{StaticResource DefaultErrorTemplate}" Text="{Binding SelectedTask.ActualRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Width="75"></TextBox>
+                <TextBox Validation.ErrorTemplate="{StaticResource DefaultErrorTemplate}" Text="{Binding Task.ActualRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Width="75"></TextBox>
                 <Label Content="{x:Static res:Resources.PlannedRunTime}"></Label>
-                <TextBox Text="{Binding SelectedTask.PlannedRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></TextBox>
+                <TextBox Text="{Binding Task.PlannedRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="75"></TextBox>
             </StackPanel>
             </GroupBox>
             <GroupBox Header="{x:Static res:Resources.ChildTaskRunTime}">
@@ -117,7 +118,7 @@
         <!--Description-->
         <StackPanel x:Name="Descr">
             <Label Content="{x:Static res:Resources.DescriptionOfTask}"></Label>
-            <TextBox Text="{Binding ElementName=TasksTree, Path=SelectedValue.SelectedTask.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AcceptsReturn="True" Height="200"></TextBox>            
+            <TextBox Text="{Binding ElementName=TasksTree, Path=SelectedValue.Task.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AcceptsReturn="True" Height="200"></TextBox>            
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="{x:Static res:Resources.AddChildTask}" Margin="2" Command="{Binding AddChildTaskCommand}" FontWeight="Normal" FontSize="12"></Button>
                 <Button Content="{x:Static res:Resources.RemoveTask}" Margin="2"  Command="{Binding RemoveSelectedTaskCommand}" FontSize="12" FontWeight="Normal"></Button>

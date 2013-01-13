@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace TaskManager
 {
@@ -22,7 +19,7 @@ namespace TaskManager
                                  where item.ID == (short)value
                                  select item.Name).First();
 
-                    return status.ToString(CultureInfo.InvariantCulture);
+                    return status.Trim();
                 }
             }
             return Properties.Resources.StatusNotFound;

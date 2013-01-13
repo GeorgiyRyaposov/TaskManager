@@ -19,7 +19,7 @@ namespace TaskManager.ViewModels
         private Tasks _newTask;
         
         public ObservableCollection<TasksModel> TasksModels { get; set; }
-        public static TasksModel SelectedTaskModel {get; set; }
+        public static TasksModel SelectedTaskModel { get; set; }
 
         #endregion //Fields
 
@@ -92,7 +92,7 @@ namespace TaskManager.ViewModels
                               ActualRunTime = 0,
                               Date = DateTime.Now
                           };
-            TasksModels.Add(new TasksModel(_newTask, _taskManagerEntities));
+            TasksModels.Add(new TasksModel(_newTask, _taskManagerEntities) { IsSelected = true });
             
             _taskManagerEntities.Tasks.AddObject(_newTask);
             _taskManagerEntities.SaveChanges();
@@ -111,25 +111,20 @@ namespace TaskManager.ViewModels
             }
         }
 
-
         //Remove selected task
         private void RemoveSelectedTask()
         {
-            if (MessageBox.Show("Вы действительно хотите удалить задачу:'" + SelectedTaskModel.SelectedTask.Name + "'?",
+            if (MessageBox.Show("Вы действительно хотите удалить задачу:'" + SelectedTaskModel.Task.Name + "'?",
                 "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                Tasks removeTask = _taskManagerEntities.Tasks.FirstOrDefault(task => task.ID == SelectedTaskModel.SelectedTask.ID);
-                _taskManagerEntities.Tasks.DeleteObject(removeTask);
+                Tasks removeTask = _taskManagerEntities.Tasks.First(task => task.ID == SelectedTaskModel.Task.ID);
+                if (removeTask != null)
+                    _taskManagerEntities.Tasks.DeleteObject(removeTask);
+
+                RemoveTask(TasksModels);
+                
                 try
                 {
-                    foreach (TasksModel tasksModel in TasksModels)
-                    {
-                        TasksModel tempTask = tasksModel.GetTaskById(tasksModel.Children, SelectedTaskModel.SelectedTask.ID);
-                        if (tempTask != null)
-                            tempTask.Parent.Children.Remove(tempTask);
-                            //TasksModels.Remove(tempTask);
-                    }
-                    //TasksModels.Remove(TasksModels.FirstOrDefault(task => task.SelectedTask.ID == SelectedTaskModel.SelectedTask.ID));
                     _taskManagerEntities.SaveChanges();
                     base.RaisePropertyChanged("TasksModels");
                 }
@@ -155,30 +150,24 @@ namespace TaskManager.ViewModels
             _newTask = new Tasks
                           {
                               Name = "<New child task>",
-                              ParentID = SelectedTaskModel.SelectedTask.ID,
+                              ParentID = SelectedTaskModel.Task.ID,
                               Performer = "",
                               PlannedRunTime = 0,
                               StatusID = 1,
                               ActualRunTime = 0,
-                              Date = DateTime.Now
+                              Date = DateTime.Now                             
                           };
-            TasksModel parentModel = null;
-            foreach (TasksModel tasksModel in TasksModels)
+
+            SelectedTaskModel.Children.Add(new TasksModel(_newTask, _taskManagerEntities) { IsSelected = true });
+
+            _taskManagerEntities.Tasks.AddObject(_newTask);
+            try
             {
-                //Check 1st task of task model
-                if (tasksModel.SelectedTask.ID == SelectedTaskModel.SelectedTask.ID)
-                {
-                    parentModel = tasksModel;
-                    break;
-                }
-                //Check subtasks of current task model
-                parentModel = tasksModel.GetTaskById(tasksModel.Children, SelectedTaskModel.SelectedTask.ID);
-            }
-            if (parentModel != null)
-            {
-                parentModel.Children.Add(new TasksModel(_newTask, _taskManagerEntities));
-                _taskManagerEntities.Tasks.AddObject(_newTask);
                 _taskManagerEntities.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Не удалось сохранить изменения."+ex.Message);
             }
         }
 
@@ -189,5 +178,28 @@ namespace TaskManager.ViewModels
             return true;
         }
         #endregion //Commands
+
+        #region Methods
+
+        //Runs through all TasksModels and removes selected Task
+        private void RemoveTask(ObservableCollection<TasksModel> taskModels)
+        {
+            if (taskModels.Contains(SelectedTaskModel))
+            {
+                taskModels.Remove(SelectedTaskModel);
+            }
+            else
+            {
+                foreach (TasksModel tasksModel in taskModels)
+                {
+                    if (tasksModel.Children.Count > 0)
+                    {
+                        RemoveTask(tasksModel.Children);
+                    }
+                }
+            }
+        }
+        
+        #endregion //Methods
     }
 }

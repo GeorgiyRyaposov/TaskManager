@@ -19,7 +19,7 @@ namespace TaskManager.Models
         public ObservableCollection<TasksModel> Children { get; set; }
 
         bool _isExpanded = true;
-        bool _isSelected = true;
+        bool _isSelected;
 
         #endregion //Data
 
@@ -32,9 +32,9 @@ namespace TaskManager.Models
 
         public TasksModel(Tasks task, TasksModel parent, TaskManagerEntities taskManagerEntities)
         {
-            SelectedTask = task;
+            Task = task;
             _parent = parent;
-            
+
             //Load items in 'Status' combobox
             UpdateStatusList();
             
@@ -43,7 +43,7 @@ namespace TaskManager.Models
             
             _childrenList =
                 new ObservableCollection<Tasks>(
-                    taskManagerEntities.Tasks.ToList().Where(item => item.ParentID == SelectedTask.ID && item.ParentID != 0));
+                    taskManagerEntities.Tasks.ToList().Where(item => item.ParentID == Task.ID && item.ParentID != 0));
 
             //Add child tasks to model
             if (_childrenList.Count > 0)
@@ -59,8 +59,8 @@ namespace TaskManager.Models
 
         public string Name
         {
-            get { return SelectedTask.Name; }
-            set { SelectedTask.Name = value;
+            get { return Task.Name; }
+            set { Task.Name = value;
                   OnPropertyChanged("Name");}
         }
 
@@ -69,7 +69,7 @@ namespace TaskManager.Models
             get
             {
                 UpdateStatusList(); //Update items of 'Status' combo
-                return SelectedTask.StatusID;
+                return Task.StatusID;
             }
             set
             {
@@ -79,13 +79,13 @@ namespace TaskManager.Models
                     if (CheckStatus(Children))
                     {
                         SetCompleteStatus(Children);
-                        SelectedTask.StatusID = value;
+                        Task.StatusID = value;
                         OnPropertyChanged("Status");
                     }
                 }
                 else
                 {
-                    SelectedTask.StatusID = value;
+                    Task.StatusID = value;
                     OnPropertyChanged("Status");
                 }
             }
@@ -111,13 +111,13 @@ namespace TaskManager.Models
             }
         }
 
-        public Tasks SelectedTask
+        public Tasks Task
         {
             get { return _task; }
             set 
             { 
                 _task = value;
-                OnPropertyChanged("SelectedTask");
+                OnPropertyChanged("Task");
             }
         }
 
@@ -245,7 +245,7 @@ namespace TaskManager.Models
         {
             using (TaskManagerEntities taskStatusEntities = new TaskManagerEntities())
             {
-                if(SelectedTask.StatusID == 1)
+                if(Task.StatusID == 1) //Status ID 'Назначена'
                     TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList().Where(status => status.ID < 4));
                 else
                     TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList());
@@ -260,7 +260,7 @@ namespace TaskManager.Models
                 foreach (TasksModel tasksModel in children)
                 {
                     SetCompleteStatus(tasksModel.Children);
-                    tasksModel.SelectedTask.StatusID = 4;
+                    tasksModel.Task.StatusID = 4;
                 }
             }
         }
@@ -274,8 +274,8 @@ namespace TaskManager.Models
             {
                 foreach (TasksModel tasksModel in children)
                 {
-                    if (tasksModel.SelectedTask.PlannedRunTime != null)
-                        sum += tasksModel.SelectedTask.PlannedRunTime.Value;
+                    if (tasksModel.Task.PlannedRunTime != null)
+                        sum += tasksModel.Task.PlannedRunTime.Value;
                     sum += CountPlannedRunTimeSum(tasksModel.Children);
                 }
             }
@@ -291,22 +291,12 @@ namespace TaskManager.Models
             {
                 foreach (TasksModel tasksModel in children)
                 {
-                    if (tasksModel.SelectedTask.ActualRunTime != null)
-                        sum += tasksModel.SelectedTask.ActualRunTime.Value;
+                    if (tasksModel.Task.ActualRunTime != null)
+                        sum += tasksModel.Task.ActualRunTime.Value;
                     sum += CountActualRunTimeSum(tasksModel.Children);
                 }
             }
             return sum;
-        }
-
-        //Gets TaskModel by task id
-        public TasksModel GetTaskById(ObservableCollection<TasksModel> taskModels, int id)
-        {
-            TasksModel tempModel = taskModels.FirstOrDefault(model => model.SelectedTask.ID == id);
-            if (tempModel != null)
-                return tempModel;
-
-            return taskModels.Select(tasksModel => GetTaskById(tasksModel.Children, id)).FirstOrDefault();
         }
 
         #endregion //Methods
