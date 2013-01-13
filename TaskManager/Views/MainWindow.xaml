@@ -6,6 +6,7 @@
         Title="{x:Static res:Resources.Title}" Height="460" Width="780" ResizeMode="NoResize">
     <Window.Resources>
         <TaskManager:StatusConverter x:Key="StatusConverter" />
+        <TaskManager:StatusColorConverter x:Key="StatusColorConverter" />
         <!--Error template-->
         <ControlTemplate x:Key="DefaultErrorTemplate">
             <DockPanel DataContext="{Binding ElementName=adorner, 
@@ -31,10 +32,11 @@
             </DockPanel>
         </ControlTemplate>
     </Window.Resources>
-   
+    <!--Main dock panel-->
     <DockPanel LastChildFill="True" Height="Auto" Width="Auto" HorizontalAlignment="Left"  VerticalAlignment="Stretch">
         <StackPanel Orientation="Vertical" DockPanel.Dock="Left" Width="275" HorizontalAlignment="Left" VerticalAlignment="Stretch"  Margin="0,0,5,0">
             <Button Content="{x:Static res:Resources.AddTask}" DockPanel.Dock="Bottom" Command="{Binding AddNewTaskCommand}" FontWeight="Normal" FontSize="12"></Button>
+            <!--Tasks tree-->
             <TreeView Name="TasksTree" ItemsSource="{Binding TasksModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto">
                 <TreeView.ItemContainerStyle>
                 <!-- This Style binds a TreeViewItem to a TaskManagerViewModel. -->
@@ -52,15 +54,23 @@
 
             <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock>
-                            <TextBlock.Text>
-                                 <MultiBinding StringFormat="{}{0} - {1}">
-                                    <Binding Path="Name"></Binding>
-                                    <Binding Path="SelectedTask.StatusID" Converter="{StaticResource StatusConverter}"></Binding>
-                                 </MultiBinding>
-                            </TextBlock.Text>
-                    </TextBlock>
-                </HierarchicalDataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusEllipse" 
+                                        DockPanel.Dock="Left" 
+                                        Width="10" Height="10" 
+                                        VerticalAlignment="Center" 
+                                        Stroke="#40000000" StrokeThickness="2" Fill="{Binding Path=SelectedTask.StatusID, Converter={StaticResource StatusColorConverter}}">
+                            </Ellipse>
+                            <TextBlock>
+                                    <TextBlock.Text>
+                                         <MultiBinding StringFormat="{}{0} - {1}">
+                                            <Binding Path="Name"></Binding>
+                                            <Binding Path="SelectedTask.StatusID" Converter="{StaticResource StatusConverter}"></Binding>
+                                         </MultiBinding>
+                                    </TextBlock.Text>
+                            </TextBlock>
+                    </StackPanel>
+                    </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
             

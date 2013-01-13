@@ -21,13 +21,14 @@ namespace TaskManager.ViewModels
         public ObservableCollection<TasksModel> TasksModels { get; set; }
         public static TasksModel SelectedTaskModel {get; set; }
 
-        #endregion
+        #endregion //Fields
 
         //Constructor
         public TaskManagerViewModel()
         {
             _taskManagerEntities = new TaskManagerEntities();
-
+            
+            //Fill treeview with tasks
             _parentTasks = new ObservableCollection<Tasks>(_taskManagerEntities.Tasks.ToList().Where(task => task.ParentID == 0));
 
             TasksModels = new ObservableCollection<TasksModel>();
@@ -36,6 +37,7 @@ namespace TaskManager.ViewModels
                 TasksModels.Add(new TasksModel(task, _taskManagerEntities));
             }
 
+            //Initialize commands
             AddCommands();
         }
 
@@ -186,6 +188,6 @@ namespace TaskManager.ViewModels
                 return false;
             return true;
         }
-        #endregion
+        #endregion //Commands
     }
 }

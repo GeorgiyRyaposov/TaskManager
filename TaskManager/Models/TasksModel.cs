@@ -21,7 +21,7 @@ namespace TaskManager.Models
         bool _isExpanded = true;
         bool _isSelected = true;
 
-        #endregion // Data
+        #endregion //Data
 
         #region Constructors
 
@@ -34,6 +34,8 @@ namespace TaskManager.Models
         {
             SelectedTask = task;
             _parent = parent;
+            
+            //Load items in 'Status' combobox
             UpdateStatusList();
             
             //Gets all child items of current task
@@ -66,13 +68,13 @@ namespace TaskManager.Models
         {
             get
             {
-                UpdateStatusList();
+                UpdateStatusList(); //Update items of 'Status' combo
                 return SelectedTask.StatusID;
             }
             set
             {
                 _newTaskStatus = value;
-                if (value == 4)
+                if (value == 4) //Status 'Завершена'
                 {
                     if (CheckStatus(Children))
                     {
@@ -80,21 +82,19 @@ namespace TaskManager.Models
                         SelectedTask.StatusID = value;
                         OnPropertyChanged("Status");
                     }
-
                 }
                 else
                 {
                     SelectedTask.StatusID = value;
                     OnPropertyChanged("Status");
                 }
-                
-                
             }
         }
 
         public int PlannedRunTimeTotal
         {
-            get {
+            get 
+            {
                 if (_task.PlannedRunTime != null)
                     return (CountPlannedRunTimeSum(Children) +_task.PlannedRunTime.Value);
                 return CountPlannedRunTimeSum(Children);
@@ -126,12 +126,10 @@ namespace TaskManager.Models
             get { return _parent; }
         }
 
-        #endregion // Person Properties
+        #endregion //Task Properties
 
         #region Presentation Members
-
-        #region IsExpanded
-
+        
         /// <summary>
         /// Gets/sets whether the TreeViewItem 
         /// associated with this object is expanded.
@@ -153,10 +151,6 @@ namespace TaskManager.Models
             }
         }
 
-        #endregion // IsExpanded
-
-        #region IsSelected
-
         /// <summary>
         /// Gets/sets whether the TreeViewItem 
         /// associated with this object is selected.
@@ -175,8 +169,7 @@ namespace TaskManager.Models
             }
         }
 
-
-        #endregion // IsSelected
+        #endregion // Presentation Members
 
         #region Error validation
 
@@ -184,7 +177,7 @@ namespace TaskManager.Models
         {
             get { throw new NotImplementedException(); }
         }
-        
+
         public string this[string propertyName]
         {
             get
@@ -204,6 +197,7 @@ namespace TaskManager.Models
                 return validationResult;
             }
         }
+
         //Validate Task name
         private string ValidateName()
         {
@@ -224,11 +218,13 @@ namespace TaskManager.Models
 
         #endregion // Error validation
 
-        #endregion // Presentation Members
-
         #region Methods
 
-        //Check status of all child tasks
+        /// <summary>
+        /// Return false if any child task status is 'Назначена'
+        /// </summary>
+        /// <param name="children"></param>
+        /// <returns></returns>
         private bool CheckStatus(ObservableCollection<TasksModel> children)
         {
             if (children.Count > 0)
@@ -313,7 +309,7 @@ namespace TaskManager.Models
             return taskModels.Select(tasksModel => GetTaskById(tasksModel.Children, id)).FirstOrDefault();
         }
 
-        #endregion
+        #endregion //Methods
 
         #region INotifyPropertyChanged Members
 
