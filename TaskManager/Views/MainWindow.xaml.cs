@@ -8,12 +8,10 @@ namespace TaskManager.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TaskManagerViewModel taskManagerViewModel;
         public MainWindow()
         {
             InitializeComponent();
-            taskManagerViewModel = new TaskManagerViewModel();
-            DataContext = taskManagerViewModel;
+            DataContext = new TaskManagerViewModel();
         }
     }
 }

@@ -13,13 +13,16 @@ namespace TaskManager
         {
             if (value != null)
             {
-                using (TaskManagerEntities taskManagerEntities = new TaskManagerEntities())
+                switch ((short)value)
                 {
-                    var status = (from item in taskManagerEntities.Status
-                                 where item.ID == (short)value
-                                 select item.Name).First();
-
-                    return status.Trim();
+                    case (short)StatusEnum.Assigned:
+                        return Properties.Resources.Status_Assigned;
+                    case (short)StatusEnum.Complete:
+                        return Properties.Resources.Status_Complete;
+                    case (short)StatusEnum.InProgress:
+                        return Properties.Resources.Status_InProgress;
+                    case (short)StatusEnum.Stopped:
+                        return Properties.Resources.Status_Stopped;
                 }
             }
             return Properties.Resources.StatusNotFound;
@@ -29,6 +32,14 @@ namespace TaskManager
         {
             throw new NotImplementedException();
         }
+    }
+
+    public enum StatusEnum:short
+    {
+        Assigned = 1,
+        InProgress = 2,
+        Stopped = 3,
+        Complete = 4
     }
 
     //Converts StatusID to Color
@@ -43,7 +54,7 @@ namespace TaskManager
                     case 1:
                         return new SolidColorBrush(Colors.DeepSkyBlue);
                     case 2:
-                        return new SolidColorBrush(Colors.Red);
+                        return new SolidColorBrush(Colors.Yellow);
                     case 3:
                         return new SolidColorBrush(Colors.Gray);
                     case 4:

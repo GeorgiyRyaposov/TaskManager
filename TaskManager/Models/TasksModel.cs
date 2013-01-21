@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using TaskManager.ViewModels;
 
 namespace TaskManager.Models
 {
@@ -15,7 +14,7 @@ namespace TaskManager.Models
         private Tasks _task;
         private short _newTaskStatus;
 
-        public ObservableCollection<Status> TaskStatusList { get; set; }
+        //public ObservableCollection<Status> TaskStatusList { get; set; }
         public ObservableCollection<TasksModel> Children { get; set; }
 
         bool _isExpanded = true;
@@ -41,9 +40,9 @@ namespace TaskManager.Models
             //Gets all child items of current task
             Children = new ObservableCollection<TasksModel>();
             
-            _childrenList =
-                new ObservableCollection<Tasks>(
-                    taskManagerEntities.Tasks.ToList().Where(item => item.ParentID == Task.ID && item.ParentID != 0));
+            //_childrenList =
+            //    new ObservableCollection<Tasks>(
+            //        taskManagerEntities.Tasks.ToList().Where(item => item.ParentID == Task.ID && item.ParentID != 0));
 
             //Add child tasks to model
             if (_childrenList.Count > 0)
@@ -69,7 +68,7 @@ namespace TaskManager.Models
             get
             {
                 UpdateStatusList(); //Update items of 'Status' combo
-                return Task.StatusID;
+                return Task.Status;
             }
             set
             {
@@ -79,13 +78,13 @@ namespace TaskManager.Models
                     if (CheckStatus(Children))
                     {
                         SetCompleteStatus(Children);
-                        Task.StatusID = value;
+                        Task.Status = value;
                         OnPropertyChanged("Status");
                     }
                 }
                 else
                 {
-                    Task.StatusID = value;
+                    Task.Status = value;
                     OnPropertyChanged("Status");
                 }
             }
@@ -163,7 +162,7 @@ namespace TaskManager.Models
                 if (value != _isSelected)
                 {
                     _isSelected = value;
-                    TaskManagerViewModel.SelectedTaskModel = this;
+                    //TaskManagerViewModel.SelectedTask = this;
                     OnPropertyChanged("IsSelected");
                 }
             }
@@ -243,13 +242,13 @@ namespace TaskManager.Models
         //Update items of Status combobox
         private void UpdateStatusList()
         {
-            using (TaskManagerEntities taskStatusEntities = new TaskManagerEntities())
-            {
-                if(Task.StatusID == 1) //Status ID 'Назначена'
-                    TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList().Where(status => status.ID < 4));
-                else
-                    TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList());
-            }
+            //using (TaskManagerEntities taskStatusEntities = new TaskManagerEntities())
+            //{
+            //    if (Task.Status == 1) //Status ID 'Назначена'
+            //        TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList().Where(status => status.ID < 4));
+            //    else
+            //        TaskStatusList = new ObservableCollection<Status>(taskStatusEntities.Status.ToList());
+            //}
         }
 
         //Set 'Complete' status to all child tasks
@@ -260,7 +259,7 @@ namespace TaskManager.Models
                 foreach (TasksModel tasksModel in children)
                 {
                     SetCompleteStatus(tasksModel.Children);
-                    tasksModel.Task.StatusID = 4;
+                    tasksModel.Task.Status = 4;
                 }
             }
         }

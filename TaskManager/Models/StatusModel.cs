@@ -1,78 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace TaskManager.Models
 {
-    class StatusModel : IDataErrorInfo
+    public class StatusModel : ObservableCollection<Status>
     {
-        #region Status properties
+        private Status _selectedStatus;
 
-        private string _name;
-        public string Name
-        {
-            get { return _name; } 
-            set 
-            { 
-                Previous = _name;
-                _name = value;
-            }
-        }
-        public short ID { get; set; }
-        public string Previous { get; set; }
-        
-        #endregion
+        private readonly Status _assigned = new Status(1, Properties.Resources.Status_Assigned);
+        private readonly Status _inProgress = new Status(2, Properties.Resources.Status_InProgress);
+        private readonly Status _stopped = new Status(3, Properties.Resources.Status_Stopped);
+        private readonly Status _complete = new Status(4, Properties.Resources.Status_Complete);
 
-        public StatusModel(string name, short id)
+        public StatusModel()
         {
-            Name = name;
-            Previous = name;
-            ID = id;
+            Add(_assigned);
+            Add(_inProgress);
+            Add(_stopped);
+            Add(_complete);
         }
 
-        public void Save()
+        public Status SelectedStatus
         {
-            using (TaskManagerEntities taskManagerEntities = new TaskManagerEntities())
+            get { return _selectedStatus; } 
+            set
             {
-                
-
-            }
-        }
-
-        public string Error
-        {
-            get { throw new NotImplementedException();}
-        }
-
-
-        public string this[string propertyName]
-        {
-            get 
-            { 
-                string validationResult = null;
-                switch (propertyName)
+                if (value == _assigned)
+                    Remove(_complete);
+                else
                 {
-                    case "Name":
-                        validationResult = ValidateName();
-                        break;
-                    default:
-                        throw new ApplicationException("Unknow property being validated on status");
+                    if(!Contains(_complete))
+                        Add(_complete);
                 }
-                return validationResult;
-            }
-        }
-
-        private string ValidateName()
-        {
-            if (String.IsNullOrEmpty(this.Name))
-                return "Выберите статус.";
-
-            if (Name == "Завершена" && Previous == "Назначена")
-                return "Задача не может быть переведена в статус 'Завершена', т.к. она не выполнялась.";
-
-            return String.Empty;
+                base.OnPropertyChanged(new PropertyChangedEventArgs("SelectedStatus"));
+                _selectedStatus = value;
+            } 
         }
     }
 }

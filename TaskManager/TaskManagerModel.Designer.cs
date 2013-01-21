@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("TaskManagerModel", "FK_Tasks_Status", "Status", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(TaskManager.Status), "Tasks", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(TaskManager.Tasks), true)]
+[assembly: EdmRelationshipAttribute("TaskManagerModel", "ParentChildAssoc", "Tasks", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(TaskManager.Tasks), "Tasks1", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(TaskManager.Tasks), true)]
 
 #endregion
 
@@ -85,22 +85,6 @@ namespace TaskManager
             }
         }
         private ObjectSet<Tasks> _Tasks;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<Status> Status
-        {
-            get
-            {
-                if ((_Status == null))
-                {
-                    _Status = base.CreateObjectSet<Status>("Status");
-                }
-                return _Status;
-            }
-        }
-        private ObjectSet<Status> _Status;
 
         #endregion
         #region AddTo Methods
@@ -112,14 +96,6 @@ namespace TaskManager
         {
             base.AddObject("Tasks", tasks);
         }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the Status EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToStatus(Status status)
-        {
-            base.AddObject("Status", status);
-        }
 
         #endregion
     }
@@ -128,112 +104,6 @@ namespace TaskManager
     #endregion
     
     #region Entities
-    
-    /// <summary>
-    /// No Metadata Documentation available.
-    /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="TaskManagerModel", Name="Status")]
-    [Serializable()]
-    [DataContractAttribute(IsReference=true)]
-    public partial class Status : EntityObject
-    {
-        #region Factory Method
-    
-        /// <summary>
-        /// Create a new Status object.
-        /// </summary>
-        /// <param name="id">Initial value of the ID property.</param>
-        /// <param name="name">Initial value of the Name property.</param>
-        public static Status CreateStatus(global::System.Int16 id, global::System.String name)
-        {
-            Status status = new Status();
-            status.ID = id;
-            status.Name = name;
-            return status;
-        }
-
-        #endregion
-        #region Primitive Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int16 ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                if (_ID != value)
-                {
-                    OnIDChanging(value);
-                    ReportPropertyChanging("ID");
-                    _ID = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("ID");
-                    OnIDChanged();
-                }
-            }
-        }
-        private global::System.Int16 _ID;
-        partial void OnIDChanging(global::System.Int16 value);
-        partial void OnIDChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Name
-        {
-            get
-            {
-                return _Name;
-            }
-            set
-            {
-                OnNameChanging(value);
-                ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Name");
-                OnNameChanged();
-            }
-        }
-        private global::System.String _Name;
-        partial void OnNameChanging(global::System.String value);
-        partial void OnNameChanged();
-
-        #endregion
-    
-        #region Navigation Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("TaskManagerModel", "FK_Tasks_Status", "Tasks")]
-        public EntityCollection<Tasks> Tasks
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Tasks>("TaskManagerModel.FK_Tasks_Status", "Tasks");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Tasks>("TaskManagerModel.FK_Tasks_Status", "Tasks", value);
-                }
-            }
-        }
-
-        #endregion
-    }
     
     /// <summary>
     /// No Metadata Documentation available.
@@ -249,20 +119,18 @@ namespace TaskManager
         /// Create a new Tasks object.
         /// </summary>
         /// <param name="id">Initial value of the ID property.</param>
-        /// <param name="parentID">Initial value of the ParentID property.</param>
         /// <param name="name">Initial value of the Name property.</param>
         /// <param name="performer">Initial value of the Performer property.</param>
         /// <param name="date">Initial value of the Date property.</param>
-        /// <param name="statusID">Initial value of the StatusID property.</param>
-        public static Tasks CreateTasks(global::System.Int32 id, global::System.Int32 parentID, global::System.String name, global::System.String performer, global::System.DateTime date, global::System.Int16 statusID)
+        /// <param name="status">Initial value of the Status property.</param>
+        public static Tasks CreateTasks(global::System.Int32 id, global::System.String name, global::System.String performer, global::System.DateTime date, global::System.Int16 status)
         {
             Tasks tasks = new Tasks();
             tasks.ID = id;
-            tasks.ParentID = parentID;
             tasks.Name = name;
             tasks.Performer = performer;
             tasks.Date = date;
-            tasks.StatusID = statusID;
+            tasks.Status = status;
             return tasks;
         }
 
@@ -295,30 +163,6 @@ namespace TaskManager
         private global::System.Int32 _ID;
         partial void OnIDChanging(global::System.Int32 value);
         partial void OnIDChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 ParentID
-        {
-            get
-            {
-                return _ParentID;
-            }
-            set
-            {
-                OnParentIDChanging(value);
-                ReportPropertyChanging("ParentID");
-                _ParentID = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ParentID");
-                OnParentIDChanged();
-            }
-        }
-        private global::System.Int32 _ParentID;
-        partial void OnParentIDChanging(global::System.Int32 value);
-        partial void OnParentIDChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -397,24 +241,24 @@ namespace TaskManager
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Int16 StatusID
+        public global::System.Int16 Status
         {
             get
             {
-                return _StatusID;
+                return _Status;
             }
             set
             {
-                OnStatusIDChanging(value);
-                ReportPropertyChanging("StatusID");
-                _StatusID = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("StatusID");
-                OnStatusIDChanged();
+                OnStatusChanging(value);
+                ReportPropertyChanging("Status");
+                _Status = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Status");
+                OnStatusChanged();
             }
         }
-        private global::System.Int16 _StatusID;
-        partial void OnStatusIDChanging(global::System.Int16 value);
-        partial void OnStatusIDChanged();
+        private global::System.Int16 _Status;
+        partial void OnStatusChanging(global::System.Int16 value);
+        partial void OnStatusChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -511,6 +355,30 @@ namespace TaskManager
         private global::System.String _Description;
         partial void OnDescriptionChanging(global::System.String value);
         partial void OnDescriptionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> ParentID
+        {
+            get
+            {
+                return _ParentID;
+            }
+            set
+            {
+                OnParentIDChanging(value);
+                ReportPropertyChanging("ParentID");
+                _ParentID = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ParentID");
+                OnParentIDChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _ParentID;
+        partial void OnParentIDChanging(Nullable<global::System.Int32> value);
+        partial void OnParentIDChanged();
 
         #endregion
     
@@ -522,16 +390,16 @@ namespace TaskManager
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("TaskManagerModel", "FK_Tasks_Status", "Status")]
-        public Status Status
+        [EdmRelationshipNavigationPropertyAttribute("TaskManagerModel", "ParentChildAssoc", "Tasks1")]
+        public Tasks ParentTask
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Status>("TaskManagerModel.FK_Tasks_Status", "Status").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Tasks>("TaskManagerModel.ParentChildAssoc", "Tasks1").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Status>("TaskManagerModel.FK_Tasks_Status", "Status").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Tasks>("TaskManagerModel.ParentChildAssoc", "Tasks1").Value = value;
             }
         }
         /// <summary>
@@ -539,17 +407,39 @@ namespace TaskManager
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Status> StatusReference
+        public EntityReference<Tasks> ParentTaskReference
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Status>("TaskManagerModel.FK_Tasks_Status", "Status");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Tasks>("TaskManagerModel.ParentChildAssoc", "Tasks1");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Status>("TaskManagerModel.FK_Tasks_Status", "Status", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Tasks>("TaskManagerModel.ParentChildAssoc", "Tasks1", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("TaskManagerModel", "ParentChildAssoc", "Tasks")]
+        public EntityCollection<Tasks> ChildTask
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Tasks>("TaskManagerModel.ParentChildAssoc", "Tasks");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Tasks>("TaskManagerModel.ParentChildAssoc", "Tasks", value);
                 }
             }
         }

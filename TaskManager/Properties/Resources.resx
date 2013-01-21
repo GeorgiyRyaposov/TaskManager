@@ -135,6 +135,18 @@
   <data name="DescriptionOfTask" xml:space="preserve">
     <value>Описание: </value>
   </data>
+  <data name="Error_CantSaveChanges" xml:space="preserve">
+    <value>Не удалось сохранить изменения</value>
+  </data>
+  <data name="NewPerformer" xml:space="preserve">
+    <value>Исполнитель</value>
+  </data>
+  <data name="NewSubTaskName" xml:space="preserve">
+    <value>&lt;Новая подзадача&gt;</value>
+  </data>
+  <data name="NewTaskName" xml:space="preserve">
+    <value>&lt;Новая задача&gt;</value>
+  </data>
   <data name="PerformerName" xml:space="preserve">
     <value>Исполнитель: </value>
   </data>
@@ -153,6 +165,18 @@
   <data name="StatusNotFound" xml:space="preserve">
     <value>Статус не найден</value>
   </data>
+  <data name="Status_Assigned" xml:space="preserve">
+    <value>Назначена</value>
+  </data>
+  <data name="Status_Complete" xml:space="preserve">
+    <value>Завершена</value>
+  </data>
+  <data name="Status_InProgress" xml:space="preserve">
+    <value>Выполняется</value>
+  </data>
+  <data name="Status_Stopped" xml:space="preserve">
+    <value>Приостановлена</value>
+  </data>
   <data name="TaskName" xml:space="preserve">
     <value>Наименование задачи: </value>
   </data>
@@ -164,5 +188,26 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Управление задачами</value>
+  </data>
+  <data name="UI_AreYouSure_Remove" xml:space="preserve">
+    <value>Вы действительно хотите удалить задачу:</value>
+  </data>
+  <data name="UI_Confirmation" xml:space="preserve">
+    <value>Подтверждение</value>
+  </data>
+  <data name="UI_DataGrid_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="UI_DataGrid_Task" xml:space="preserve">
+    <value>Задача</value>
+  </data>
+  <data name="Valid_EnterTaskName" xml:space="preserve">
+    <value>Введите имя задачи</value>
+  </data>
+  <data name="Valid_Error_UnknowProperty" xml:space="preserve">
+    <value>Неизвестное свойство не прошло валидацию</value>
+  </data>
+  <data name="Valid_TaskCantBeSetToCompleted" xml:space="preserve">
+    <value>Задача не может быть переведена в статус\n'Завершена', т.к. одна из подзадач не завершена.</value>
   </data>
 </root>

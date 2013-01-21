@@ -115,6 +115,42 @@ namespace TaskManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Не удалось сохранить изменения.
+        /// </summary>
+        public static string Error_CantSaveChanges {
+            get {
+                return ResourceManager.GetString("Error_CantSaveChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Исполнитель.
+        /// </summary>
+        public static string NewPerformer {
+            get {
+                return ResourceManager.GetString("NewPerformer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Новая подзадача&gt;.
+        /// </summary>
+        public static string NewSubTaskName {
+            get {
+                return ResourceManager.GetString("NewSubTaskName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Новая задача&gt;.
+        /// </summary>
+        public static string NewTaskName {
+            get {
+                return ResourceManager.GetString("NewTaskName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Исполнитель: .
         /// </summary>
         public static string PerformerName {
@@ -160,6 +196,42 @@ namespace TaskManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Назначена.
+        /// </summary>
+        public static string Status_Assigned {
+            get {
+                return ResourceManager.GetString("Status_Assigned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Завершена.
+        /// </summary>
+        public static string Status_Complete {
+            get {
+                return ResourceManager.GetString("Status_Complete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выполняется.
+        /// </summary>
+        public static string Status_InProgress {
+            get {
+                return ResourceManager.GetString("Status_InProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Приостановлена.
+        /// </summary>
+        public static string Status_Stopped {
+            get {
+                return ResourceManager.GetString("Status_Stopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Статус не найден.
         /// </summary>
         public static string StatusNotFound {
@@ -201,6 +273,69 @@ namespace TaskManager.Properties {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вы действительно хотите удалить задачу:.
+        /// </summary>
+        public static string UI_AreYouSure_Remove {
+            get {
+                return ResourceManager.GetString("UI_AreYouSure_Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Подтверждение.
+        /// </summary>
+        public static string UI_Confirmation {
+            get {
+                return ResourceManager.GetString("UI_Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Статус.
+        /// </summary>
+        public static string UI_DataGrid_Status {
+            get {
+                return ResourceManager.GetString("UI_DataGrid_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Задача.
+        /// </summary>
+        public static string UI_DataGrid_Task {
+            get {
+                return ResourceManager.GetString("UI_DataGrid_Task", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите имя задачи.
+        /// </summary>
+        public static string Valid_EnterTaskName {
+            get {
+                return ResourceManager.GetString("Valid_EnterTaskName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Неизвестное свойство не прошло валидацию.
+        /// </summary>
+        public static string Valid_Error_UnknowProperty {
+            get {
+                return ResourceManager.GetString("Valid_Error_UnknowProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Задача не может быть переведена в статус\n&apos;Завершена&apos;, т.к. одна из подзадач не завершена..
+        /// </summary>
+        public static string Valid_TaskCantBeSetToCompleted {
+            get {
+                return ResourceManager.GetString("Valid_TaskCantBeSetToCompleted", resourceCulture);
             }
         }
     }

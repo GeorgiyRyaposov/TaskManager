@@ -5,58 +5,49 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="TaskManagerModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityContainer Name="TaskManagerModelStoreContainer">
-          <EntitySet Name="Status" EntityType="TaskManagerModel.Store.Status" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Tasks" EntityType="TaskManagerModel.Store.Tasks" store:Type="Tables" Schema="dbo" />
-          <AssociationSet Name="FK_Tasks_Status" Association="TaskManagerModel.Store.FK_Tasks_Status">
-            <End Role="Status" EntitySet="Status" />
-            <End Role="Tasks" EntitySet="Tasks" />
-          </AssociationSet>
-        </EntityContainer>
-        <EntityType Name="Status">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="smallint" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="nchar" Nullable="false" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="Tasks">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="ParentID" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="Performer" Type="varchar" Nullable="false" MaxLength="50" />
-          <Property Name="Date" Type="date" Nullable="false" />
-          <Property Name="StatusID" Type="smallint" Nullable="false" />
-          <Property Name="PlannedRunTime" Type="smallint" />
-          <Property Name="ActualRunTime" Type="smallint" />
-          <Property Name="CompletionDate" Type="date" />
-          <Property Name="Description" Type="text" />
-        </EntityType>
-        <Association Name="FK_Tasks_Status">
-          <End Role="Status" Type="TaskManagerModel.Store.Status" Multiplicity="1" />
-          <End Role="Tasks" Type="TaskManagerModel.Store.Tasks" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Status">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Tasks">
-              <PropertyRef Name="StatusID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-      </Schema></edmx:StorageModels>
+  <EntityContainer Name="TaskManagerModelStoreContainer">
+    <EntitySet Name="Tasks" EntityType="TaskManagerModel.Store.Tasks" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="ParentChildAssoc" Association="TaskManagerModel.Store.ParentChildAssoc">
+      <End Role="Tasks" EntitySet="Tasks" />
+      <End Role="Tasks1" EntitySet="Tasks" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Tasks">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+    <Property Name="Performer" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="Date" Type="datetime" Nullable="false" />
+    <Property Name="Status" Type="smallint" Nullable="false" />
+    <Property Name="PlannedRunTime" Type="smallint" Nullable="true" />
+    <Property Name="ActualRunTime" Type="smallint" Nullable="true" />
+    <Property Name="CompletionDate" Type="datetime" Nullable="true" />
+    <Property Name="Description" Type="varchar(max)" Nullable="true" />
+    <Property Name="ParentID" Type="int" Nullable="true" />
+  </EntityType>
+  <Association Name="ParentChildAssoc">
+    <End Role="Tasks" Type="TaskManagerModel.Store.Tasks" Multiplicity="*" />
+    <End Role="Tasks1" Type="TaskManagerModel.Store.Tasks" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Tasks1">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Tasks">
+        <PropertyRef Name="ParentID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="TaskManagerModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
         <EntityContainer Name="TaskManagerEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Tasks" EntityType="TaskManagerModel.Tasks" />
-          <EntitySet Name="Status" EntityType="TaskManagerModel.Status" />
-          <AssociationSet Name="FK_Tasks_Status" Association="TaskManagerModel.FK_Tasks_Status">
-            <End Role="Status" EntitySet="Status" />
+          <AssociationSet Name="ParentChildAssoc" Association="TaskManagerModel.ParentChildAssoc">
             <End Role="Tasks" EntitySet="Tasks" />
+            <End Role="Tasks1" EntitySet="Tasks" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Tasks">
@@ -64,34 +55,27 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ParentID" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Performer" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" />
-          <Property Name="StatusID" Type="Int16" Nullable="false" />
+          <Property Name="Status" Type="Int16" Nullable="false" />
           <Property Name="PlannedRunTime" Type="Int16" />
           <Property Name="ActualRunTime" Type="Int16" />
           <Property Name="CompletionDate" Type="DateTime" />
           <Property Name="Description" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
-          <NavigationProperty Name="Status" Relationship="TaskManagerModel.FK_Tasks_Status" FromRole="Tasks" ToRole="Status" />
+          <Property Type="Int32" Name="ParentID" Nullable="true" />
+          <NavigationProperty Name="ParentTask" Relationship="TaskManagerModel.ParentChildAssoc" FromRole="Tasks" ToRole="Tasks1" />
+          <NavigationProperty Name="ChildTask" Relationship="TaskManagerModel.ParentChildAssoc" FromRole="Tasks1" ToRole="Tasks" />
         </EntityType>
-        <EntityType Name="Status">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Type="Int16" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="Tasks" Relationship="TaskManagerModel.FK_Tasks_Status" FromRole="Status" ToRole="Tasks" />
-        </EntityType>
-        <Association Name="FK_Tasks_Status">
-          <End Type="TaskManagerModel.Status" Role="Status" Multiplicity="1" />
+        <Association Name="ParentChildAssoc">
           <End Type="TaskManagerModel.Tasks" Role="Tasks" Multiplicity="*" />
+          <End Type="TaskManagerModel.Tasks" Role="Tasks1" Multiplicity="0..1" />
           <ReferentialConstraint>
-            <Principal Role="Status">
+            <Principal Role="Tasks1">
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Tasks">
-              <PropertyRef Name="StatusID" />
+              <PropertyRef Name="ParentID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -99,31 +83,26 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="TaskManagerModelStoreContainer" CdmEntityContainer="TaskManagerEntities">
-          <EntitySetMapping Name="Tasks"><EntityTypeMapping TypeName="TaskManagerModel.Tasks"><MappingFragment StoreEntitySet="Tasks">
-            <ScalarProperty Name="ID" ColumnName="ID" />
-            <ScalarProperty Name="ParentID" ColumnName="ParentID" />
-            <ScalarProperty Name="Name" ColumnName="Name" />
-            <ScalarProperty Name="Performer" ColumnName="Performer" />
-            <ScalarProperty Name="Date" ColumnName="Date" />
-            <ScalarProperty Name="StatusID" ColumnName="StatusID" />
-            <ScalarProperty Name="PlannedRunTime" ColumnName="PlannedRunTime" />
-            <ScalarProperty Name="ActualRunTime" ColumnName="ActualRunTime" />
-            <ScalarProperty Name="CompletionDate" ColumnName="CompletionDate" />
-            <ScalarProperty Name="Description" ColumnName="Description" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Status">
-            <EntityTypeMapping TypeName="TaskManagerModel.Status">
-              <MappingFragment StoreEntitySet="Status">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="TaskManagerModelStoreContainer" CdmEntityContainer="TaskManagerEntities">
+    <EntitySetMapping Name="Tasks">
+      <EntityTypeMapping TypeName="IsTypeOf(TaskManagerModel.Tasks)">
+        <MappingFragment StoreEntitySet="Tasks">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Performer" ColumnName="Performer" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="PlannedRunTime" ColumnName="PlannedRunTime" />
+          <ScalarProperty Name="ActualRunTime" ColumnName="ActualRunTime" />
+          <ScalarProperty Name="CompletionDate" ColumnName="CompletionDate" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="ParentID" ColumnName="ParentID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
@@ -142,11 +121,12 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="TaskManagerModel">
-        <EntityTypeShape EntityType="TaskManagerModel.Tasks" Width="1.5" PointX="3" PointY="1" Height="2.7427376302083335" IsExpanded="true" />
-        <EntityTypeShape EntityType="TaskManagerModel.Status" Width="1.5" PointX="0.75" PointY="1.5" Height="1.4279589843749996" />
-        <AssociationConnector Association="TaskManagerModel.FK_Tasks_Status" >
-          <ConnectorPoint PointX="2.25" PointY="2.2139794921875" />
-          <ConnectorPoint PointX="3" PointY="2.2139794921875" />
+        <EntityTypeShape EntityType="TaskManagerModel.Tasks" Width="1.5" PointX="3" PointY="1" Height="2.9070849609375" IsExpanded="true" />
+        <AssociationConnector Association="TaskManagerModel.ParentChildAssoc">
+          <ConnectorPoint PointX="3" PointY="1.6852082170758929" />
+          <ConnectorPoint PointX="2.75" PointY="1.6852082170758929" />
+          <ConnectorPoint PointX="2.75" PointY="3.18429150390625" />
+          <ConnectorPoint PointX="3" PointY="3.18429150390625" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

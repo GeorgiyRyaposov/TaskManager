@@ -72,12 +72,14 @@
     </ApplicationDefinition>
     <Compile Include="Models\StatusModel.cs" />
     <Compile Include="Models\TasksModel.cs" />
+    <Compile Include="Status.cs" />
     <Compile Include="StatusConverter.cs" />
     <Compile Include="TaskManagerModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>TaskManagerModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="TasksPartialClass.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -123,6 +125,9 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>TaskManagerModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TaskManagerModel.edmx.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
