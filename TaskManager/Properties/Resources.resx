@@ -138,6 +138,12 @@
   <data name="Error_CantSaveChanges" xml:space="preserve">
     <value>Не удалось сохранить изменения</value>
   </data>
+  <data name="MSG_UnhandledError" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="MSG_UnhandledError_Text" xml:space="preserve">
+    <value>Произошла непредвиденная ошибка</value>
+  </data>
   <data name="NewPerformer" xml:space="preserve">
     <value>Исполнитель</value>
   </data>
@@ -201,13 +207,19 @@
   <data name="UI_DataGrid_Task" xml:space="preserve">
     <value>Задача</value>
   </data>
+  <data name="UI_ListOfSubTasks" xml:space="preserve">
+    <value>Список подзадач:</value>
+  </data>
   <data name="Valid_EnterTaskName" xml:space="preserve">
     <value>Введите имя задачи</value>
   </data>
   <data name="Valid_Error_UnknowProperty" xml:space="preserve">
     <value>Неизвестное свойство не прошло валидацию</value>
   </data>
+  <data name="Valid_NullField" xml:space="preserve">
+    <value>Поле не может быть пустым</value>
+  </data>
   <data name="Valid_TaskCantBeSetToCompleted" xml:space="preserve">
-    <value>Задача не может быть переведена в статус\n'Завершена', т.к. одна из подзадач не завершена.</value>
+    <value>Задача не может быть переведена в статус 'Завершена', т.к. одна из подзадач не завершена.</value>
   </data>
 </root>

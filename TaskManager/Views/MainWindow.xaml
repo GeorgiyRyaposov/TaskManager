@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="{x:Static res:Resources.Title}" Height="500" Width="800">
     <Window.Resources>
-        <TaskManager:StatusConverter x:Key="StatusConverter" />
         <TaskManager:StatusColorConverter x:Key="StatusColorConverter" />
         <!--Button style-->
         <Style TargetType="Button">
@@ -22,6 +21,19 @@
         <Style TargetType="TextBox">
             <Setter Property="DataContext" Value ="{Binding ElementName=TasksTree, Path=SelectedValue}"/>
             <Setter Property="MinWidth" Value ="25"/>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--ComboBox style-->
+        <Style TargetType="ComboBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <!--DataPicker style-->
         <Style TargetType="DatePicker">
@@ -41,30 +53,16 @@
             <Setter Property="VerticalAlignment" Value ="Top"/>
             <Setter Property="Margin" Value ="0,2,0,0"/>
         </Style>
-        <!--Error template-->
-        <ControlTemplate x:Key="DefaultErrorTemplate">
-            <DockPanel DataContext="{Binding ElementName=adorner, 
-                                                               Path=AdornedElement.(Validation.Errors)/ErrorContent}">
-                <Ellipse x:Name="Ellipse" 
-                            DockPanel.Dock="Right" 
-                            Margin="2,0,2,0" 
-                            Width="14" Height="14" 
-                            VerticalAlignment="Center" 
-                            Stroke="#40000000" StrokeThickness="2" Fill="Red">
-                    <Ellipse.ToolTip>
-                        <Border MaxWidth="350">
-                            <ContentControl FontSize="14" Content="{Binding}"/>
-                        </Border>
-                    </Ellipse.ToolTip>
-                </Ellipse>
-                <Border BorderBrush="#40FFAF00" BorderThickness="2" IsHitTestVisible="False">
-                    <Border.Background>
-                        <SolidColorBrush Color="Red" Opacity="0.2"/>
-                    </Border.Background>
-                    <AdornedElementPlaceholder Margin="-2" Name="adorner"/>
-                </Border>
-            </DockPanel>
-        </ControlTemplate>
+        <!--ToolTip style-->
+        <Style TargetType="ToolTip">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock TextWrapping="Wrap" MaxWidth="200" FontSize="12" Text="{Binding}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <!--Main dock panel-->
     <Grid>
@@ -100,12 +98,12 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
-                    </Style.Triggers>
+                        </Style.Triggers>
                 </Style>
             </TreeView.ItemContainerStyle>
 
             <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <HierarchicalDataTemplate ItemsSource="{Binding ChildTask}">
                         <StackPanel Orientation="Horizontal">
                             <Ellipse x:Name="StatusEllipse" 
                                         DockPanel.Dock="Left" 
@@ -122,7 +120,7 @@
         <!--Header-->
         <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.TaskName}"></Label>
-            <TextBox Validation.ErrorTemplate="{StaticResource DefaultErrorTemplate}" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300"></TextBox>
+            <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300"></TextBox>
         </StackPanel>
         <!--Performer and status-->
         <StackPanel Grid.Row="1" Grid.Column="1"  Orientation="Horizontal">
@@ -135,13 +133,13 @@
                 SelectedValuePath="Number" 
                 DisplayMemberPath="Name"
                 SelectedItem="{Binding Path=StatusModels.SelectedStatus, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
-                Validation.ErrorTemplate="{StaticResource DefaultErrorTemplate}"  Width="150" Height="25">
+                Width="150" Height="25">
             </ComboBox>
         </StackPanel>
             <!--Registration date and complete date-->
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.RegistrationDate}"></Label>
-            <DatePicker SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <DatePicker SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
             <Label Content="{x:Static res:Resources.CompleteDate}"></Label>
             <DatePicker SelectedDate="{Binding CompletionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
@@ -149,9 +147,9 @@
         <GroupBox Grid.Row="3" Grid.Column="1" Header="{x:Static res:Resources.TaskRunTime}">
             <StackPanel Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.ActualRunTime}"/>
-                <TextBox Validation.ErrorTemplate="{StaticResource DefaultErrorTemplate}" Text="{Binding ActualRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Width="75"/>
+                <TextBox Text="{Binding ActualRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, TargetNullValue=''}" Width="75"/>
             <Label Content="{x:Static res:Resources.PlannedRunTime}"/>
-                <TextBox Text="{Binding PlannedRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="75"/>
+                <TextBox Text="{Binding PlannedRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, TargetNullValue=''}" Width="75"/>
             </StackPanel>
         </GroupBox>
             <!--RunTimeTotal-->
@@ -160,15 +158,18 @@
             <Label Content="{x:Static res:Resources.ActualRunTime}"></Label>
             <Label Content="{Binding Path=SelectedValue.ActualRunTimeTotal, ElementName=TasksTree, Mode=OneWay}" Width="75" Height="25"/>
             <Label Content="{x:Static res:Resources.PlannedRunTime}"></Label>
-            <Label Content="{Binding Path=SelectedValue.PlannedRunTimeTotal, ElementName=TasksTree, Mode=OneWay}" Width="75" Height="25"/>                
+                <Label Content="{Binding Path=SelectedValue.PlannedRunTimeTotal, ElementName=TasksTree, Mode=OneWay}" Width="75" Height="25"/>                
         </StackPanel>
             </GroupBox>
             <!--Description-->
-        <StackPanel Grid.Row="5" Grid.Column="1"  Orientation="Vertical">
-            <Label Content="{x:Static res:Resources.DescriptionOfTask}"></Label>
-            <StackPanel Grid.Row="5" Grid.Column="1"  Orientation="Horizontal">
+        <StackPanel Grid.Row="5" Grid.Column="1"  Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
+                <Label Content="{x:Static res:Resources.DescriptionOfTask}"></Label>
                 <TextBox Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AcceptsReturn="True" Height="190" MinWidth="300"></TextBox>
-                <DataGrid ItemsSource="{Binding Path=SelectedValue.Children, ElementName=TasksTree, UpdateSourceTrigger=PropertyChanged}" MinWidth="225" AutoGenerateColumns="False" EnableRowVirtualization="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" IsEnabled="False">
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <Label Content="{x:Static res:Resources.UI_ListOfSubTasks}"></Label>
+                <DataGrid ItemsSource="{Binding Path=SelectedValue.ChildTask, ElementName=TasksTree, UpdateSourceTrigger=PropertyChanged}" MinWidth="225" AutoGenerateColumns="False" EnableRowVirtualization="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" IsEnabled="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Header="{x:Static res:Resources.UI_DataGrid_Task}" MinWidth="150" />
                         <DataGridTextColumn Binding="{Binding Status}" Header="{x:Static res:Resources.UI_DataGrid_Status}" MinWidth="75" />

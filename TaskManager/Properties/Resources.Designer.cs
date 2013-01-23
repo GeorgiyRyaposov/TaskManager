@@ -124,6 +124,24 @@ namespace TaskManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ошибка.
+        /// </summary>
+        public static string MSG_UnhandledError {
+            get {
+                return ResourceManager.GetString("MSG_UnhandledError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Произошла непредвиденная ошибка.
+        /// </summary>
+        public static string MSG_UnhandledError_Text {
+            get {
+                return ResourceManager.GetString("MSG_UnhandledError_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Исполнитель.
         /// </summary>
         public static string NewPerformer {
@@ -313,6 +331,15 @@ namespace TaskManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Список подзадач:.
+        /// </summary>
+        public static string UI_ListOfSubTasks {
+            get {
+                return ResourceManager.GetString("UI_ListOfSubTasks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Введите имя задачи.
         /// </summary>
         public static string Valid_EnterTaskName {
@@ -331,7 +358,16 @@ namespace TaskManager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Задача не может быть переведена в статус\n&apos;Завершена&apos;, т.к. одна из подзадач не завершена..
+        ///   Looks up a localized string similar to Поле не может быть пустым.
+        /// </summary>
+        public static string Valid_NullField {
+            get {
+                return ResourceManager.GetString("Valid_NullField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Задача не может быть переведена в статус &apos;Завершена&apos;, т.к. одна из подзадач не завершена..
         /// </summary>
         public static string Valid_TaskCantBeSetToCompleted {
             get {

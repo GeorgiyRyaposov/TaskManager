@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -19,7 +19,6 @@ namespace TaskManager.ViewModels
         public ObservableCollection<Tasks> TasksCollection { get; set; }
         public StatusModel StatusModels { get; set; }
         public static Tasks SelectedTask { get; set; }
-
 
         #endregion //Fields
 
@@ -117,7 +116,7 @@ namespace TaskManager.ViewModels
                     _taskManagerEntities.Tasks.DeleteObject(removeTask);
 
                 //Remove task from collection
-                RemoveTask(TasksCollection);
+                RemoveTask(SelectedTask.ChildTask);
             }
         }
 
@@ -125,7 +124,7 @@ namespace TaskManager.ViewModels
         {
             if (SelectedTask == null)
                 return false;
-            if (SelectedTask.Children.Count > 0)
+            if (SelectedTask.ChildTask.Count > 0)
                 return false;
             return true;
         }
@@ -133,6 +132,8 @@ namespace TaskManager.ViewModels
         //Add child task to selected task
         private void AddChildTask()
         {
+            SelectedTask.IsExpanded = true;
+
             _newTask = new Tasks
                           {
                               Name = Properties.Resources.NewSubTaskName,
@@ -142,11 +143,11 @@ namespace TaskManager.ViewModels
                               Status = (short)StatusEnum.Assigned,
                               ActualRunTime = 0,
                               Date = DateTime.Now,
-                              IsSelected = true
+                              IsSelected = true,
                           };
-            TasksCollection.Add(_newTask);
-            
-            _taskManagerEntities.Tasks.AddObject(_newTask);
+
+            _taskManagerEntities.Tasks.AddObject(_newTask);            
+            base.RaisePropertyChanged("TasksCollection");
         }
         
         private bool AddChildTaskCanExecute()
@@ -160,6 +161,8 @@ namespace TaskManager.ViewModels
         {
             if (SelectedTask == null)
                 return false;
+            if (!String.IsNullOrEmpty(SelectedTask.Error))
+                return false;
             return true;
         }
         #endregion //Commands
@@ -167,7 +170,7 @@ namespace TaskManager.ViewModels
         #region Methods
 
         //Runs through all TasksModels and removes selected Task
-        private void RemoveTask(ObservableCollection<Tasks> tasksList)
+        private void RemoveTask(EntityCollection<Tasks> tasksList)
         {
             if (tasksList.Contains(SelectedTask))
             {
@@ -177,9 +180,9 @@ namespace TaskManager.ViewModels
             {
                 foreach (Tasks task in tasksList)
                 {
-                    if (task.Children.Count > 0)
+                    if (task.ChildTask.Count > 0)
                     {
-                        RemoveTask(task.Children);
+                        RemoveTask(task.ChildTask);
                     }
                 }
             }
@@ -187,51 +190,6 @@ namespace TaskManager.ViewModels
         
         #endregion //Methods
 
-        #region Error validation
-
-        public string Error
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public string this[string propertyName]
-        {
-            get
-            {
-                string validationResult;
-                switch (propertyName)
-                {
-                    case "Status":
-                        validationResult = ValidateStatus();
-                        break;
-                    case "Name":
-                        validationResult = ValidateName();
-                        break;
-                    default:
-                        throw new ApplicationException(Properties.Resources.Valid_Error_UnknowProperty);
-                }
-                return validationResult;
-            }
-        }
-
-        //Validate Task name
-        private string ValidateName()
-        {
-            if (String.IsNullOrEmpty(SelectedTask.Name))
-                return Properties.Resources.Valid_EnterTaskName;
-
-            return String.Empty;
-        }
-
-        //Validate Task status
-        private string ValidateStatus()
-        {
-            if ((SelectedTask.NewStatusSelected == (short)StatusEnum.Complete) && (SelectedTask.CheckStatus(SelectedTask.Children) == false))
-                return Properties.Resources.Valid_TaskCantBeSetToCompleted;
-
-            return String.Empty;
-        }
-
-        #endregion // Error validation
+        
     }
 }
