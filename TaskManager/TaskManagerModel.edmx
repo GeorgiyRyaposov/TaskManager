@@ -18,13 +18,13 @@
     </Key>
     <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
-    <Property Name="Performer" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="Performer" Type="nvarchar" Nullable="false" MaxLength="50" />
     <Property Name="Date" Type="datetime" Nullable="false" />
     <Property Name="Status" Type="smallint" Nullable="false" />
     <Property Name="PlannedRunTime" Type="smallint" Nullable="true" />
     <Property Name="ActualRunTime" Type="smallint" Nullable="true" />
     <Property Name="CompletionDate" Type="datetime" Nullable="true" />
-    <Property Name="Description" Type="varchar(max)" Nullable="true" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
     <Property Name="ParentID" Type="int" Nullable="true" />
   </EntityType>
   <Association Name="ParentChildAssoc">
@@ -56,13 +56,13 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="Performer" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Performer" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" />
           <Property Name="Status" Type="Int16" Nullable="false" />
           <Property Name="PlannedRunTime" Type="Int16" />
           <Property Name="ActualRunTime" Type="Int16" />
           <Property Name="CompletionDate" Type="DateTime" />
-          <Property Name="Description" Type="String" MaxLength="Max" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Type="Int32" Name="ParentID" Nullable="true" />
           <NavigationProperty Name="ParentTask" Relationship="TaskManagerModel.ParentChildAssoc" FromRole="Tasks" ToRole="Tasks1" />
           <NavigationProperty Name="ChildTask" Relationship="TaskManagerModel.ParentChildAssoc" FromRole="Tasks1" ToRole="Tasks" />

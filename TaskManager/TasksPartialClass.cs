@@ -1,16 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data.Objects.DataClasses;
-using TaskManager.ViewModels;
+using System.Globalization;
 
 namespace TaskManager
 {
-    public partial class Tasks : EntityObject, IDataErrorInfo
+    public partial class Tasks : IDataErrorInfo
     {
         #region Variables
 
-        private bool _isExpanded;
-        private bool _isSelected;
         private string _validationResult;
 
         #endregion //Variables
@@ -18,35 +16,6 @@ namespace TaskManager
         #region Properties
 
         public short NewStatusSelected { get; set; }
-        
-        //When item of tree is selected
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                if (value != _isSelected)
-                {
-                    _isSelected = value;
-                    TaskManagerViewModel.SelectedTask = this;
-                    OnPropertyChanged("IsSelected");
-                }
-            }
-        }
-
-        //When item of tree is expanded
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set
-            {
-                if (value != _isExpanded)
-                {
-                    _isExpanded = value;
-                    OnPropertyChanged("IsExpanded");
-                }
-            }
-        }
         
         //Count Planned total runtime of child tasks
         public int PlannedRunTimeTotal
@@ -74,26 +43,23 @@ namespace TaskManager
 
         #region Methods
 
-        partial void OnStatusChanging(global::System.Int16 value)
+        partial void OnStatusChanging(Int16 value)
         {
             NewStatusSelected = value;
         }
 
         partial void OnStatusChanged()
         {
-            if (TaskManagerViewModel.SelectedTask != null)
+            if (Status == (short)StatusEnum.Complete)
             {
-                if (Status == (short)StatusEnum.Complete)
+                if (CheckStatus(ChildTask))
                 {
-                    if (CheckStatus(TaskManagerViewModel.SelectedTask.ChildTask))
-                    {
-                        SetCompleteStatus(TaskManagerViewModel.SelectedTask.ChildTask);
-                    }
-                    else
-                    {
-                        _Status = (short)StatusEnum.InProgress;
-                        OnPropertyChanged("Status");
-                    }
+                    SetCompleteStatus(ChildTask);
+                }
+                else
+                {
+                    _Status = (short)StatusEnum.InProgress;
+                    OnPropertyChanged("Status");
                 }
             }
         }
@@ -209,57 +175,44 @@ namespace TaskManager
         //Validate Task name
         private string ValidateName()
         {
-            if (TaskManagerViewModel.SelectedTask != null)
-            {
-                if (String.IsNullOrEmpty(TaskManagerViewModel.SelectedTask.Name))
-                    return Properties.Resources.Valid_EnterTaskName;
-            }
+            if (String.IsNullOrEmpty(Name))
+                return Properties.Resources.Valid_EnterTaskName;
+         
             return String.Empty;
         }
 
         //Validate Date
         private string ValidatePlannedDate()
         {
-            if (TaskManagerViewModel.SelectedTask != null)
-            {
-                if (String.IsNullOrEmpty(TaskManagerViewModel.SelectedTask.Date.ToString()))
-                    return Properties.Resources.Valid_NullField;
-            }
+            if (String.IsNullOrEmpty(Date.ToString(CultureInfo.InvariantCulture)))
+                return Properties.Resources.Valid_NullField;
+            
             return String.Empty;
         }
         
         //Validate ActualRunTime
         private string ValidateActualRunTime()
         {
-            if (TaskManagerViewModel.SelectedTask != null)
-            {
-                if (TaskManagerViewModel.SelectedTask.ActualRunTime == null)
-                    return Properties.Resources.Valid_NullField;
-            }
+            if (ActualRunTime == null)
+                return Properties.Resources.Valid_NullField;
             return String.Empty;
         }
 
         //Validate PlannedRunTime
         private string ValidatePlannedRunTime()
         {
-            if (TaskManagerViewModel.SelectedTask != null)
-            {
-                if (TaskManagerViewModel.SelectedTask.PlannedRunTime == null)
-                    return Properties.Resources.Valid_NullField;
-            }
+            if (PlannedRunTime == null)
+                return Properties.Resources.Valid_NullField;
             return String.Empty;
         }
 
         //Validate Task status
         private string ValidateStatus()
         {
-            if (TaskManagerViewModel.SelectedTask != null)
-            {
-                if (TaskManagerViewModel.SelectedTask.NewStatusSelected == (short) StatusEnum.Complete
-                    &&
-                    (TaskManagerViewModel.SelectedTask.CheckStatus(TaskManagerViewModel.SelectedTask.ChildTask) == false)){
-                    return Properties.Resources.Valid_TaskCantBeSetToCompleted;
-                }
+            if (NewStatusSelected == (short) StatusEnum.Complete
+                &&
+                (CheckStatus(ChildTask) == false)){
+                return Properties.Resources.Valid_TaskCantBeSetToCompleted;
             }
             return String.Empty;
         }

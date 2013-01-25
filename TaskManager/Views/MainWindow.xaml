@@ -5,6 +5,7 @@
         xmlns:TaskManager="clr-namespace:TaskManager" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         Title="{x:Static res:Resources.Title}" Height="500" Width="800">
     <Window.Resources>
@@ -86,7 +87,12 @@
     <StackPanel Grid.Row="0" Grid.RowSpan="7" Grid.Column="0" Orientation="Vertical">
             <Button Command="{Binding AddNewTaskCommand}" Content="{x:Static res:Resources.AddTask}"></Button>
             <!--Tasks tree-->
-            <TreeView Name="TasksTree" ItemsSource="{Binding Path=TasksCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto">
+            <TreeView Name="TasksTree" 
+                      ItemsSource="{Binding Path=TasksCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      Width="Auto">
+                <e:Interaction.Behaviors>
+                    <TaskManager:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+                </e:Interaction.Behaviors>
                 <TreeView.ItemContainerStyle>
                 <!-- This Style binds a TreeViewItem to a TaskManagerViewModel. -->
                 <Style TargetType="{x:Type TreeViewItem}">

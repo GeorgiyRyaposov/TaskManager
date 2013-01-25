@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, and Azure
 -- --------------------------------------------------
--- Date Created: 01/20/2013 21:11:14
--- Generated from EDMX file: C:\Users\SxWx\documents\visual studio 2010\Projects\TaskManager\TaskManager\TaskManagerModel.edmx
+-- Date Created: 01/24/2013 20:02:43
+-- Generated from EDMX file: C:\Users\SxWx\Documents\Visual Studio 2010\Projects\TaskManager\TaskManager\TaskManagerModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -37,13 +37,13 @@ GO
 CREATE TABLE [dbo].[Tasks] (
     [ID] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(50)  NOT NULL,
-    [Performer] varchar(50)  NOT NULL,
+    [Performer] nvarchar(50)  NOT NULL,
     [Date] datetime  NOT NULL,
     [Status] smallint  NOT NULL,
     [PlannedRunTime] smallint  NULL,
     [ActualRunTime] smallint  NULL,
     [CompletionDate] datetime  NULL,
-    [Description] varchar(max)  NULL,
+    [Description] nvarchar(max)  NULL,
     [ParentID] int  NULL
 );
 GO

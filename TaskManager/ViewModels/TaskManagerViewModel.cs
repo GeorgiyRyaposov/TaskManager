@@ -3,6 +3,7 @@ using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Interactivity;
 using GalaSoft.MvvmLight;
 using TaskManager.Models;
 using GalaSoft.MvvmLight.Command;
@@ -15,10 +16,42 @@ namespace TaskManager.ViewModels
 
         private readonly TaskManagerEntities _taskManagerEntities;
         private Tasks _newTask;
-
+        private bool _isExpanded;
+        private bool _isSelected;
+        
         public ObservableCollection<Tasks> TasksCollection { get; set; }
         public StatusModel StatusModels { get; set; }
         public static Tasks SelectedTask { get; set; }
+
+        
+        //When item of tree is selected
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if (value != _isSelected)
+                {
+                    _isSelected = value;
+                    
+                    base.RaisePropertyChanged("IsSelected");
+                }
+            }
+        }
+
+        //When item of tree is expanded
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set
+            {
+                if (value != _isExpanded)
+                {
+                    _isExpanded = value;
+                    base.RaisePropertyChanged("IsExpanded");
+                }
+            }
+        }
 
         #endregion //Fields
 
@@ -27,7 +60,7 @@ namespace TaskManager.ViewModels
         {
             _taskManagerEntities = new TaskManagerEntities();
             StatusModels = new StatusModel();
-            
+
             //Fill treeview with tasks
             TasksCollection = new ObservableCollection<Tasks>(_taskManagerEntities.Tasks.Where(task => task.ParentID == null).ToList());
             
@@ -85,11 +118,11 @@ namespace TaskManager.ViewModels
                               Status = (short)StatusEnum.Assigned,
                               ActualRunTime = 0,
                               Date = DateTime.Now,
-                              IsSelected = true
                           };
 
             TasksCollection.Add(_newTask);
             _taskManagerEntities.Tasks.AddObject(_newTask);
+            base.RaisePropertyChanged("TasksCollection");
         }
 
         //Save all changes in current entity
@@ -108,15 +141,18 @@ namespace TaskManager.ViewModels
         //Remove selected task
         private void RemoveSelectedTask()
         {
-            if (MessageBox.Show(Properties.Resources.Error_CantSaveChanges + "'" + SelectedTask.Name + "'?",
+            if (MessageBox.Show(Properties.Resources.UI_AreYouSure_Remove + "'" + SelectedTask.Name + "'?",
                 Properties.Resources.UI_Confirmation, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                Tasks removeTask = _taskManagerEntities.Tasks.First(task => task.ID == SelectedTask.ID);
-                if (removeTask != null)
-                    _taskManagerEntities.Tasks.DeleteObject(removeTask);
+                object removeTask;
+                if (_taskManagerEntities.TryGetObjectByKey(SelectedTask.EntityKey, out removeTask))
+                    _taskManagerEntities.Tasks.DeleteObject((Tasks)removeTask);
 
                 //Remove task from collection
-                RemoveTask(SelectedTask.ChildTask);
+                if (TasksCollection.Contains(SelectedTask))
+                    TasksCollection.Remove(SelectedTask);
+                else
+                    RemoveTask(SelectedTask.ChildTask);
             }
         }
 
@@ -132,8 +168,6 @@ namespace TaskManager.ViewModels
         //Add child task to selected task
         private void AddChildTask()
         {
-            SelectedTask.IsExpanded = true;
-
             _newTask = new Tasks
                           {
                               Name = Properties.Resources.NewSubTaskName,
@@ -143,9 +177,8 @@ namespace TaskManager.ViewModels
                               Status = (short)StatusEnum.Assigned,
                               ActualRunTime = 0,
                               Date = DateTime.Now,
-                              IsSelected = true,
                           };
-
+            SelectedTask.ChildTask.Add(_newTask);
             _taskManagerEntities.Tasks.AddObject(_newTask);            
             base.RaisePropertyChanged("TasksCollection");
         }

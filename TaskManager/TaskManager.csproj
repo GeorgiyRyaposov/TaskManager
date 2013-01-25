@@ -79,6 +79,7 @@
       <DependentUpon>TaskManagerModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="TasksPartialClass.cs" />
+    <Compile Include="TreeViewSelectedItem.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
