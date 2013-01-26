@@ -39,15 +39,8 @@
         <!--DataPicker style-->
         <Style TargetType="DatePicker">
             <Setter Property="DataContext" Value ="{Binding ElementName=TasksTree, Path=SelectedValue}"/>
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="MaxWidth" Value="150"/>
-            <Setter Property="MaxHeight" Value="25"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Width" Value="Auto"/>
         </Style>
         <!--StackPanel style-->
         <Style TargetType="StackPanel">
@@ -87,9 +80,10 @@
         </Grid.ColumnDefinitions>
         <GridSplitter HorizontalAlignment="Right" 
                   VerticalAlignment="Stretch" 
-                  Grid.Column="0" Grid.RowSpan="7" ResizeBehavior="BasedOnAlignment"
+                  Grid.Column="0" Grid.RowSpan="8" ResizeBehavior="BasedOnAlignment"
+                      Margin="0,0,3,0"
                   Width="5" Background="#FFBCBCBC" ResizeDirection="Columns" MaxWidth="500" />
-    <StackPanel Grid.Row="0" Grid.RowSpan="7" Grid.Column="0" Orientation="Vertical" Margin="0,0,5,0">
+    <StackPanel Grid.Row="0" Grid.RowSpan="7" Grid.Column="0" Orientation="Vertical" Margin="0,0,10,0">
             <Button Command="{Binding AddNewTaskCommand}" Content="{x:Static res:Resources.AddTask}" HorizontalAlignment="Left"></Button>
             <!--Tasks tree-->
             <TreeView Name="TasksTree" 
@@ -134,7 +128,7 @@
         <Label Grid.Row="0" Grid.Column="1" Content="{x:Static res:Resources.TaskName}"></Label>
         <TextBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" 
                  Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-                 HorizontalAlignment="Stretch" Width="Auto" MinWidth="300"></TextBox>
+                 HorizontalAlignment="Stretch" Width="Auto"></TextBox>
         
         <!--/StackPanel-->
         <!--Performer and status-->
@@ -181,7 +175,7 @@
             
             <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
                     Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                    AcceptsReturn="True" MinHeight="190" MinWidth="300" 
+                    AcceptsReturn="True" 
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto"></TextBox>
         
             
