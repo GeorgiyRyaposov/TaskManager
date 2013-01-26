@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 using TaskManager.ViewModels;
@@ -8,17 +11,15 @@ namespace TaskManager
     public class BindableSelectedItemBehavior : Behavior<TreeView>
     {
         #region SelectedItem Property
-
+        
         public Tasks SelectedItem
         {
-            get { return TaskManagerViewModel.SelectedTask; }
-            set { TaskManagerViewModel.SelectedTask = value; }
-            //get{ return (Tasks)GetValue(SelectedItemProperty); }
-            //set { SetValue(SelectedItemProperty, value); }
+            get { return (Tasks)GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
         }
-
+        
         public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register("SelectedItem", typeof(object), typeof(BindableSelectedItemBehavior), new UIPropertyMetadata(null, OnSelectedItemChanged));
+            DependencyProperty.Register("SelectedItem", typeof(Tasks), typeof(BindableSelectedItemBehavior), new UIPropertyMetadata(null, OnSelectedItemChanged));
 
         private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -26,16 +27,16 @@ namespace TaskManager
             if (item != null)
             {
                 item.SetValue(TreeViewItem.IsSelectedProperty, true);
-                
             }
         }
 
         #endregion
 
+
         protected override void OnAttached()
         {
             base.OnAttached();
-            
+
             this.AssociatedObject.SelectedItemChanged += OnTreeViewSelectedItemChanged;
         }
 
@@ -52,6 +53,7 @@ namespace TaskManager
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             this.SelectedItem = (Tasks)e.NewValue;
+            TaskManagerViewModel.SelectedTask = (Tasks)e.NewValue;
         }
     }
 }

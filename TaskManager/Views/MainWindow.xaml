@@ -52,6 +52,7 @@
         <!--StackPanel style-->
         <Style TargetType="StackPanel">
             <Setter Property="VerticalAlignment" Value ="Top"/>
+            <Setter Property="HorizontalAlignment" Value ="Stretch"/>
             <Setter Property="Margin" Value ="0,2,0,0"/>
         </Style>
         <!--ToolTip style-->
@@ -68,24 +69,28 @@
     <!--Main dock panel-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="45" />
-            <RowDefinition Height="45" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <GridSplitter HorizontalAlignment="Right" 
                   VerticalAlignment="Stretch" 
                   Grid.Column="0" Grid.RowSpan="7" ResizeBehavior="BasedOnAlignment"
                   Width="5" Background="#FFBCBCBC" ResizeDirection="Columns" MaxWidth="500" />
-    <StackPanel Grid.Row="0" Grid.RowSpan="7" Grid.Column="0" Orientation="Vertical">
-            <Button Command="{Binding AddNewTaskCommand}" Content="{x:Static res:Resources.AddTask}"></Button>
+    <StackPanel Grid.Row="0" Grid.RowSpan="7" Grid.Column="0" Orientation="Vertical" Margin="0,0,5,0">
+            <Button Command="{Binding AddNewTaskCommand}" Content="{x:Static res:Resources.AddTask}" HorizontalAlignment="Left"></Button>
             <!--Tasks tree-->
             <TreeView Name="TasksTree" 
                       ItemsSource="{Binding Path=TasksCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -97,7 +102,7 @@
                 <!-- This Style binds a TreeViewItem to a TaskManagerViewModel. -->
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                     <Setter Property="FontWeight" Value="Normal" />
                     <Setter Property="HorizontalAlignment" Value="Left"/>
                     <Style.Triggers>
@@ -124,12 +129,16 @@
         </TreeView>
         </StackPanel>
         <!--Header-->
-        <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal">
-            <Label Content="{x:Static res:Resources.TaskName}"></Label>
-            <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300"></TextBox>
-        </StackPanel>
+        <!--StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal"-->
+        
+        <Label Grid.Row="0" Grid.Column="1" Content="{x:Static res:Resources.TaskName}"></Label>
+        <TextBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" 
+                 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+                 HorizontalAlignment="Stretch" Width="Auto" MinWidth="300"></TextBox>
+        
+        <!--/StackPanel-->
         <!--Performer and status-->
-        <StackPanel Grid.Row="1" Grid.Column="1"  Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.PerformerName}"></Label>
             <TextBox Text="{Binding Performer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150"></TextBox>
             <Label Content="{x:Static res:Resources.TaskStatus}"></Label>
@@ -143,14 +152,14 @@
             </ComboBox>
         </StackPanel>
             <!--Registration date and complete date-->
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.RegistrationDate}"></Label>
             <DatePicker SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
             <Label Content="{x:Static res:Resources.CompleteDate}"></Label>
             <DatePicker SelectedDate="{Binding CompletionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
             <!--RunTime-->
-        <GroupBox Grid.Row="3" Grid.Column="1" Header="{x:Static res:Resources.TaskRunTime}">
+        <GroupBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="4" Header="{x:Static res:Resources.TaskRunTime}">
             <StackPanel Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.ActualRunTime}"/>
                 <TextBox Text="{Binding ActualRunTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, TargetNullValue=''}" Width="75"/>
@@ -159,7 +168,7 @@
             </StackPanel>
         </GroupBox>
             <!--RunTimeTotal-->
-            <GroupBox Grid.Row="4" Grid.Column="1" Header="{x:Static res:Resources.ChildTaskRunTime}">
+            <GroupBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Header="{x:Static res:Resources.ChildTaskRunTime}">
         <StackPanel Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.ActualRunTime}"></Label>
             <Label Content="{Binding Path=SelectedValue.ActualRunTimeTotal, ElementName=TasksTree, Mode=OneWay}" Width="75" Height="25"/>
@@ -168,23 +177,26 @@
         </StackPanel>
             </GroupBox>
             <!--Description-->
-        <StackPanel Grid.Row="5" Grid.Column="1"  Orientation="Horizontal">
-            <StackPanel Orientation="Vertical">
-                <Label Content="{x:Static res:Resources.DescriptionOfTask}"></Label>
-                <TextBox Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AcceptsReturn="True" Height="190" MinWidth="300"></TextBox>
-            </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <Label Content="{x:Static res:Resources.UI_ListOfSubTasks}"></Label>
-                <DataGrid ItemsSource="{Binding Path=SelectedValue.ChildTask, ElementName=TasksTree, UpdateSourceTrigger=PropertyChanged}" MinWidth="225" AutoGenerateColumns="False" EnableRowVirtualization="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" IsEnabled="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Name}" Header="{x:Static res:Resources.UI_DataGrid_Task}" MinWidth="150" />
-                        <DataGridTextColumn Binding="{Binding Status}" Header="{x:Static res:Resources.UI_DataGrid_Status}" MinWidth="75" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </StackPanel>
-        </StackPanel>
+            <Label Grid.Row="5" Grid.Column="1" Content="{x:Static res:Resources.DescriptionOfTask}"></Label>
+            
+            <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
+                    Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    AcceptsReturn="True" MinHeight="190" MinWidth="300" 
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto"></TextBox>
+        
+            
+            <Label Grid.Row="5" Grid.Column="3" Content="{x:Static res:Resources.UI_ListOfSubTasks}"></Label>
+
+            <DataGrid Grid.Row="6" Grid.Column="3" ItemsSource="{Binding Path=SelectedValue.ChildTask, ElementName=TasksTree, UpdateSourceTrigger=PropertyChanged}" MinWidth="225" AutoGenerateColumns="False" EnableRowVirtualization="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" IsEnabled="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Name}" Header="{x:Static res:Resources.UI_DataGrid_Task}" MinWidth="150" />
+                            <DataGridTextColumn Binding="{Binding Status}" Header="{x:Static res:Resources.UI_DataGrid_Status}" MinWidth="75" />
+                        </DataGrid.Columns>
+            </DataGrid>
+            
+
         <!--SubTaskButtons-->
-        <StackPanel Grid.Row="6" Grid.Column="1"  Orientation="Horizontal">
+        <StackPanel Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal">
             <Button Content="{x:Static res:Resources.AddChildTask}" Margin="2" Command="{Binding AddChildTaskCommand}"></Button>
             <Button Content="{x:Static res:Resources.RemoveTask}" Margin="2"  Command="{Binding RemoveSelectedTaskCommand}" ></Button>
             <Button Content="{x:Static res:Resources.SaveChanges}" Margin="2"  Command="{Binding SaveChangesCommand}"></Button>

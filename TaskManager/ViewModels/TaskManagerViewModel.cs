@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Interactivity;
+using System.Windows.Controls;
 using GalaSoft.MvvmLight;
 using TaskManager.Models;
 using GalaSoft.MvvmLight.Command;
@@ -16,43 +17,12 @@ namespace TaskManager.ViewModels
 
         private readonly TaskManagerEntities _taskManagerEntities;
         private Tasks _newTask;
-        private bool _isExpanded;
-        private bool _isSelected;
-        
+
         public ObservableCollection<Tasks> TasksCollection { get; set; }
+        
         public StatusModel StatusModels { get; set; }
         public static Tasks SelectedTask { get; set; }
-
         
-        //When item of tree is selected
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                if (value != _isSelected)
-                {
-                    _isSelected = value;
-                    
-                    base.RaisePropertyChanged("IsSelected");
-                }
-            }
-        }
-
-        //When item of tree is expanded
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set
-            {
-                if (value != _isExpanded)
-                {
-                    _isExpanded = value;
-                    base.RaisePropertyChanged("IsExpanded");
-                }
-            }
-        }
-
         #endregion //Fields
 
         //Constructor
@@ -119,7 +89,7 @@ namespace TaskManager.ViewModels
                               ActualRunTime = 0,
                               Date = DateTime.Now,
                           };
-
+            
             TasksCollection.Add(_newTask);
             _taskManagerEntities.Tasks.AddObject(_newTask);
             base.RaisePropertyChanged("TasksCollection");
@@ -144,15 +114,19 @@ namespace TaskManager.ViewModels
             if (MessageBox.Show(Properties.Resources.UI_AreYouSure_Remove + "'" + SelectedTask.Name + "'?",
                 Properties.Resources.UI_Confirmation, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                object removeTask;
-                if (_taskManagerEntities.TryGetObjectByKey(SelectedTask.EntityKey, out removeTask))
-                    _taskManagerEntities.Tasks.DeleteObject((Tasks)removeTask);
-
                 //Remove task from collection
-                if (TasksCollection.Contains(SelectedTask))
-                    TasksCollection.Remove(SelectedTask);
+                Tasks removeTask = SelectedTask;
+                if (TasksCollection.Contains(removeTask))
+                    TasksCollection.Remove(removeTask);
                 else
+                {
                     RemoveTask(SelectedTask.ChildTask);
+                }
+
+                //Remove task from entities
+                object temp;
+                if (_taskManagerEntities.TryGetObjectByKey(removeTask.EntityKey, out temp))
+                    _taskManagerEntities.Tasks.DeleteObject((Tasks)temp);
             }
         }
 
@@ -179,7 +153,7 @@ namespace TaskManager.ViewModels
                               Date = DateTime.Now,
                           };
             SelectedTask.ChildTask.Add(_newTask);
-            _taskManagerEntities.Tasks.AddObject(_newTask);            
+            _taskManagerEntities.AddToTasks(_newTask);
             base.RaisePropertyChanged("TasksCollection");
         }
         
@@ -203,26 +177,23 @@ namespace TaskManager.ViewModels
         #region Methods
 
         //Runs through all TasksModels and removes selected Task
-        private void RemoveTask(EntityCollection<Tasks> tasksList)
+        private bool RemoveTask(EntityCollection<Tasks> tasksList)
         {
             if (tasksList.Contains(SelectedTask))
             {
                 tasksList.Remove(SelectedTask);
+                return true;
             }
-            else
+            foreach (Tasks task in tasksList)
             {
-                foreach (Tasks task in tasksList)
+                if (task.ChildTask.Count > 0)
                 {
-                    if (task.ChildTask.Count > 0)
-                    {
-                        RemoveTask(task.ChildTask);
-                    }
+                    return RemoveTask(task.ChildTask);
                 }
             }
+            return false;
         }
         
         #endregion //Methods
-
-        
     }
 }
