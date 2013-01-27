@@ -14,9 +14,7 @@
         <Style TargetType="Button">
             <Setter Property="FontSize" Value ="12"/>
             <Setter Property="FontWeight" Value ="Normal"/>
-            <Setter Property="MinWidth" Value ="100"/>
             <Setter Property="MaxWidth" Value ="140"/>
-            <Setter Property="Height" Value ="25"/>
         </Style>
         <!--TextBox style-->
         <Style TargetType="TextBox">
@@ -84,7 +82,7 @@
                       Margin="0,0,3,0"
                   Width="5" Background="#FFBCBCBC" ResizeDirection="Columns" MaxWidth="500" />
     <StackPanel Grid.Row="0" Grid.RowSpan="7" Grid.Column="0" Orientation="Vertical" Margin="0,0,10,0">
-            <Button Command="{Binding AddNewTaskCommand}" Content="{x:Static res:Resources.AddTask}" HorizontalAlignment="Left"></Button>
+            <Button Command="{Binding AddNewTaskCommand}" Content="{x:Static res:Resources.AddTask}" HorizontalAlignment="Left" MinWidth="150"></Button>
             <!--Tasks tree-->
             <TreeView Name="TasksTree" 
                       ItemsSource="{Binding Path=TasksCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -181,7 +179,7 @@
             
             <Label Grid.Row="5" Grid.Column="3" Content="{x:Static res:Resources.UI_ListOfSubTasks}"></Label>
 
-            <DataGrid Grid.Row="6" Grid.Column="3" ItemsSource="{Binding Path=SelectedValue.ChildTask, ElementName=TasksTree, UpdateSourceTrigger=PropertyChanged}" MinWidth="225" AutoGenerateColumns="False" EnableRowVirtualization="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" IsEnabled="False">
+        <DataGrid Grid.Row="6" Grid.Column="3" ItemsSource="{Binding Path=SelectedValue.ChildTask, ElementName=TasksTree, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" EnableRowVirtualization="True" IsEnabled="False" VerticalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Name}" Header="{x:Static res:Resources.UI_DataGrid_Task}" MinWidth="150" />
                             <DataGridTextColumn Binding="{Binding Status}" Header="{x:Static res:Resources.UI_DataGrid_Status}" MinWidth="75" />
@@ -191,9 +189,9 @@
 
         <!--SubTaskButtons-->
         <StackPanel Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal">
-            <Button Content="{x:Static res:Resources.AddChildTask}" Margin="2" Command="{Binding AddChildTaskCommand}"></Button>
-            <Button Content="{x:Static res:Resources.RemoveTask}" Margin="2"  Command="{Binding RemoveSelectedTaskCommand}" ></Button>
-            <Button Content="{x:Static res:Resources.SaveChanges}" Margin="2"  Command="{Binding SaveChangesCommand}"></Button>
+            <Button Content="{x:Static res:Resources.AddChildTask}" Margin="2" Command="{Binding AddChildTaskCommand}" MinWidth="150"></Button>
+            <Button Content="{x:Static res:Resources.RemoveTask}" Margin="2"  Command="{Binding RemoveSelectedTaskCommand}" MinWidth="150"></Button>
+            <Button Content="{x:Static res:Resources.SaveChanges}" Margin="2"  Command="{Binding SaveChangesCommand}" MinWidth="150"></Button>
         </StackPanel>
     </Grid>
 

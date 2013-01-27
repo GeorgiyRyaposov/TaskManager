@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Data;
 using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
 using GalaSoft.MvvmLight;
 using TaskManager.Models;
 using GalaSoft.MvvmLight.Command;
@@ -19,12 +17,11 @@ namespace TaskManager.ViewModels
         private Tasks _newTask;
 
         public ObservableCollection<Tasks> TasksCollection { get; set; }
-        
         public StatusModel StatusModels { get; set; }
         public static Tasks SelectedTask { get; set; }
         
         #endregion //Fields
-
+        
         //Constructor
         public TaskManagerViewModel()
         {
@@ -168,15 +165,14 @@ namespace TaskManager.ViewModels
         {
             if (SelectedTask == null)
                 return false;
-            if (!String.IsNullOrEmpty(SelectedTask.Error))
-                return false;
-            return true;
+
+            return CheckTasksOnErrors(TasksCollection);
         }
         #endregion //Commands
         
         #region Methods
 
-        //Runs through all TasksModels and removes selected Task
+        //Runs through all Tasks and removes selected Task
         private bool RemoveTask(EntityCollection<Tasks> tasksList)
         {
             if (tasksList.Contains(SelectedTask))
@@ -192,6 +188,38 @@ namespace TaskManager.ViewModels
                 }
             }
             return false;
+        }
+
+        //Runs through all Tasks and check them on errors
+        private bool CheckTasksOnErrors(EntityCollection<Tasks> tasksList)
+        {
+            foreach (Tasks task in tasksList)
+            {
+                if (string.IsNullOrEmpty(task.Error) == false)
+                    return false;
+
+                if (task.ChildTask.Count > 0)
+                {
+                    if (CheckTasksOnErrors(task.ChildTask) == false)
+                        return false;
+                }
+            }
+            return true;
+        }
+        private bool CheckTasksOnErrors(ObservableCollection<Tasks> tasksList)
+        {
+            foreach (Tasks task in tasksList)
+            {
+                if (string.IsNullOrEmpty(task.Error) == false)
+                    return false;
+
+                if (task.ChildTask.Count > 0)
+                {
+                    if (CheckTasksOnErrors(task.ChildTask) == false)
+                        return false;
+                }
+            }
+            return true;
         }
         
         #endregion //Methods

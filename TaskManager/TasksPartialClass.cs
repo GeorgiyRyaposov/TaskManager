@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Data.Objects.DataClasses;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace TaskManager
 {
@@ -38,7 +39,7 @@ namespace TaskManager
                 return CountActualRunTimeSum(ChildTask);
             }
         }
-
+        
         #endregion //Properties
 
         #region Methods
@@ -147,7 +148,6 @@ namespace TaskManager
         {
             get
             {
-                
                 switch (propertyName)
                 {
                     case "Status":
@@ -176,8 +176,9 @@ namespace TaskManager
         private string ValidateName()
         {
             if (String.IsNullOrEmpty(Name))
+            {
                 return Properties.Resources.Valid_EnterTaskName;
-         
+            }
             return String.Empty;
         }
 
@@ -185,8 +186,9 @@ namespace TaskManager
         private string ValidatePlannedDate()
         {
             if (String.IsNullOrEmpty(Date.ToString(CultureInfo.InvariantCulture)))
+            {
                 return Properties.Resources.Valid_NullField;
-            
+            }
             return String.Empty;
         }
         
@@ -194,7 +196,9 @@ namespace TaskManager
         private string ValidateActualRunTime()
         {
             if (ActualRunTime == null)
+            {
                 return Properties.Resources.Valid_NullField;
+            }
             return String.Empty;
         }
 
@@ -202,7 +206,9 @@ namespace TaskManager
         private string ValidatePlannedRunTime()
         {
             if (PlannedRunTime == null)
+            {
                 return Properties.Resources.Valid_NullField;
+            }
             return String.Empty;
         }
 
