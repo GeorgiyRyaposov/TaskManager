@@ -88,14 +88,12 @@
                       ItemsSource="{Binding Path=TasksCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                       Width="Auto">
                 <e:Interaction.Behaviors>
-                    <TaskManager:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+                    <TaskManager:BindableSelectedItemBehavior SelectedItem="{Binding SelectedTask, Mode=TwoWay}" />
                 </e:Interaction.Behaviors>
                 <TreeView.ItemContainerStyle>
                 <!-- This Style binds a TreeViewItem to a TaskManagerViewModel. -->
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="FontWeight" Value="Normal" />
+                        <Setter Property="FontWeight" Value="Normal" />
                     <Setter Property="HorizontalAlignment" Value="Left"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">

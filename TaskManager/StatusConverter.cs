@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -18,18 +16,18 @@ namespace TaskManager
     class StatusColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
+        {   
             if (value != null)
             {
                 switch ((short)value)
                 {
-                    case 1:
+                    case (short)StatusEnum.Assigned:
                         return new SolidColorBrush(Colors.DeepSkyBlue);
-                    case 2:
+                    case (short)StatusEnum.InProgress:
                         return new SolidColorBrush(Colors.Yellow);
-                    case 3:
+                    case (short)StatusEnum.Stopped:
                         return new SolidColorBrush(Colors.Gray);
-                    case 4:
+                    case (short)StatusEnum.Complete:
                         return new SolidColorBrush(Colors.LimeGreen);
                     default:
                         return new SolidColorBrush(Colors.Black);

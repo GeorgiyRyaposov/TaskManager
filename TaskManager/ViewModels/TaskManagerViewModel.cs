@@ -18,7 +18,7 @@ namespace TaskManager.ViewModels
 
         public ObservableCollection<Tasks> TasksCollection { get; set; }
         public StatusModel StatusModels { get; set; }
-        public static Tasks SelectedTask { get; set; }
+        public Tasks SelectedTask { get; set; }
         
         #endregion //Fields
         
@@ -89,7 +89,6 @@ namespace TaskManager.ViewModels
             
             TasksCollection.Add(_newTask);
             _taskManagerEntities.Tasks.AddObject(_newTask);
-            base.RaisePropertyChanged("TasksCollection");
         }
 
         //Save all changes in current entity
@@ -101,7 +100,9 @@ namespace TaskManager.ViewModels
             }
             catch (Exception ex)
             {
-                throw new Exception(Properties.Resources.Error_CantSaveChanges + "\n" + ex.Message + "\n" +ex.StackTrace);
+                string msg = String.Format("{0}\n{1}\n{2}", Properties.Resources.Error_CantSaveChanges, 
+                                                ex.Message,ex.StackTrace);
+                throw new Exception(msg);
             }
         }
 
@@ -151,7 +152,6 @@ namespace TaskManager.ViewModels
                           };
             SelectedTask.ChildTask.Add(_newTask);
             _taskManagerEntities.AddToTasks(_newTask);
-            base.RaisePropertyChanged("TasksCollection");
         }
         
         private bool AddChildTaskCanExecute()
