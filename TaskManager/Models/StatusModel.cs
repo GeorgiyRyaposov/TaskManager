@@ -32,8 +32,9 @@ namespace TaskManager.Models
                     if(!Contains(_complete))
                         Add(_complete);
                 }
-                base.OnPropertyChanged(new PropertyChangedEventArgs("SelectedStatus"));
+                
                 _selectedStatus = value;
+                base.OnPropertyChanged(new PropertyChangedEventArgs("SelectedStatus"));
             } 
         }
     }
