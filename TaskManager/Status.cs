@@ -4,12 +4,12 @@
     {
         #region Properties
 
-        public short Number { get; set; }
+        public StatusEnum Number { get; set; }
         public string Name { get; set; }
 
         #endregion //Properties
 
-        public Status(short number, string name)
+        public Status(StatusEnum number, string name)
         {
             Number = number;
             Name = name;

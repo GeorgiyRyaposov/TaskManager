@@ -7,10 +7,10 @@ namespace TaskManager.Models
     {
         private Status _selectedStatus;
 
-        private readonly Status _assigned = new Status((short)StatusEnum.Assigned, Properties.Resources.Status_Assigned);
-        private readonly Status _inProgress = new Status((short)StatusEnum.InProgress, Properties.Resources.Status_InProgress);
-        private readonly Status _stopped = new Status((short)StatusEnum.Stopped, Properties.Resources.Status_Stopped);
-        private readonly Status _complete = new Status((short)StatusEnum.Complete, Properties.Resources.Status_Complete);
+        private readonly Status _assigned = new Status(StatusEnum.Assigned, Properties.Resources.Status_Assigned);
+        private readonly Status _inProgress = new Status(StatusEnum.InProgress, Properties.Resources.Status_InProgress);
+        private readonly Status _stopped = new Status(StatusEnum.Stopped, Properties.Resources.Status_Stopped);
+        private readonly Status _complete = new Status(StatusEnum.Complete, Properties.Resources.Status_Complete);
 
         public StatusModel()
         {

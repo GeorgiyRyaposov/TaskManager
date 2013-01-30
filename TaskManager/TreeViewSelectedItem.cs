@@ -4,7 +4,7 @@ using System.Windows.Interactivity;
 
 namespace TaskManager
 {
-    public class BindableSelectedItemBehavior : Behavior<TreeView>
+    public class TreeViewSelectedItem : Behavior<TreeView>
     {
         #region SelectedItem Property
 
@@ -23,11 +23,11 @@ namespace TaskManager
         }
         
         public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register("SelectedItem", typeof(Tasks), typeof(BindableSelectedItemBehavior), new UIPropertyMetadata(null,  OnSelectedItemChanged));
+            DependencyProperty.Register("SelectedItem", typeof(Tasks), typeof(TreeViewSelectedItem), new UIPropertyMetadata(null,  OnSelectedItemChanged));
 
         private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var behavior = sender as BindableSelectedItemBehavior;
+            var behavior = sender as TreeViewSelectedItem;
             if (behavior != null)
             {
                 behavior.SelectedItem = (Tasks)e.NewValue;

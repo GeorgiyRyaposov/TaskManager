@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Collections.ObjectModel;
@@ -15,10 +16,20 @@ namespace TaskManager.ViewModels
 
         private readonly TaskManagerEntities _taskManagerEntities;
         private Tasks _newTask;
+        private Tasks _selectedTask;
 
         public ObservableCollection<Tasks> TasksCollection { get; set; }
         public StatusModel StatusModels { get; set; }
-        public Tasks SelectedTask { get; set; }
+
+        public Tasks SelectedTask
+        {
+            get { return _selectedTask; }
+            set
+            {
+                _selectedTask = value;
+                base.RaisePropertyChanged("SelectedTask");
+            }
+        }
         
         #endregion //Fields
         
@@ -61,6 +72,7 @@ namespace TaskManager.ViewModels
             get;
             private set;
         }
+
 
         #endregion //fields
 
@@ -167,6 +179,7 @@ namespace TaskManager.ViewModels
                 return false;
 
             return CheckTasksOnErrors(TasksCollection);
+
         }
         #endregion //Commands
         
@@ -191,32 +204,20 @@ namespace TaskManager.ViewModels
         }
 
         //Runs through all Tasks and check them on errors
-        private bool CheckTasksOnErrors(EntityCollection<Tasks> tasksList)
+        private bool CheckTasksOnErrors(IEnumerable<Tasks> tasksList)
         {
             foreach (Tasks task in tasksList)
             {
                 if (string.IsNullOrEmpty(task.Error) == false)
-                    return false;
-
-                if (task.ChildTask.Count > 0)
                 {
-                    if (CheckTasksOnErrors(task.ChildTask) == false)
-                        return false;
+                    return false;
                 }
-            }
-            return true;
-        }
-        private bool CheckTasksOnErrors(ObservableCollection<Tasks> tasksList)
-        {
-            foreach (Tasks task in tasksList)
-            {
-                if (string.IsNullOrEmpty(task.Error) == false)
-                    return false;
-
                 if (task.ChildTask.Count > 0)
                 {
                     if (CheckTasksOnErrors(task.ChildTask) == false)
+                    {
                         return false;
+                    }
                 }
             }
             return true;

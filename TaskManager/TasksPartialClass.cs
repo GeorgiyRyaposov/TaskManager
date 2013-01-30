@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Data.Objects.DataClasses;
 using System.Globalization;
-using System.Runtime.Serialization;
 
 namespace TaskManager
 {
@@ -10,8 +9,7 @@ namespace TaskManager
     {
         #region Variables
 
-        private string _validationResult;
-
+        public int ErrorCounter;
         #endregion //Variables
 
         #region Properties
@@ -139,90 +137,42 @@ namespace TaskManager
 
         #region Error validation
 
-        public string Error
-        {
-            get { return _validationResult; }
-        }
+        public string Error { get; set; }
 
         public string this[string propertyName]
         {
             get
             {
+                Error = String.Empty;
                 switch (propertyName)
                 {
                     case "Status":
-                        _validationResult = ValidateStatus();
+                        if (NewStatusSelected == (short)StatusEnum.Complete &&
+                            (CheckStatus(ChildTask) == false))
+                        {Error = Properties.Resources.Valid_TaskCantBeSetToCompleted;}
                         break;
                     case "Name":
-                        _validationResult = ValidateName();
+                        if (String.IsNullOrEmpty(Name))
+                        {Error = Properties.Resources.Valid_EnterTaskName;}
                         break;
                     case "ActualRunTime":
-                        _validationResult = ValidateActualRunTime();
+                        if (ActualRunTime == null)
+                        {Error = Properties.Resources.Valid_NullField;}
                         break;
                     case "PlannedRunTime":
-                        _validationResult = ValidatePlannedRunTime();
+                        if (PlannedRunTime == null)
+                        {Error = Properties.Resources.Valid_NullField;}
                         break;
                     case "Date":
-                        _validationResult = ValidatePlannedDate();
+                        if (String.IsNullOrEmpty(Date.ToString(CultureInfo.InvariantCulture)))
+                        {Error = Properties.Resources.Valid_NullField;}
                         break;
                     default:
                         throw new ApplicationException(Properties.Resources.Valid_Error_UnknowProperty);
                 }
-                return _validationResult;
+                return Error;
             }
         }
-
-        //Validate Task name
-        private string ValidateName()
-        {
-            if (String.IsNullOrEmpty(Name))
-            {
-                return Properties.Resources.Valid_EnterTaskName;
-            }
-            return String.Empty;
-        }
-
-        //Validate Date
-        private string ValidatePlannedDate()
-        {
-            if (String.IsNullOrEmpty(Date.ToString(CultureInfo.InvariantCulture)))
-            {
-                return Properties.Resources.Valid_NullField;
-            }
-            return String.Empty;
-        }
-        
-        //Validate ActualRunTime
-        private string ValidateActualRunTime()
-        {
-            if (ActualRunTime == null)
-            {
-                return Properties.Resources.Valid_NullField;
-            }
-            return String.Empty;
-        }
-
-        //Validate PlannedRunTime
-        private string ValidatePlannedRunTime()
-        {
-            if (PlannedRunTime == null)
-            {
-                return Properties.Resources.Valid_NullField;
-            }
-            return String.Empty;
-        }
-
-        //Validate Task status
-        private string ValidateStatus()
-        {
-            if (NewStatusSelected == (short) StatusEnum.Complete
-                &&
-                (CheckStatus(ChildTask) == false)){
-                return Properties.Resources.Valid_TaskCantBeSetToCompleted;
-            }
-            return String.Empty;
-        }
-
         #endregion // Error validation
     }
 }

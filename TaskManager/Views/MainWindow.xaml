@@ -88,7 +88,7 @@
                       ItemsSource="{Binding Path=TasksCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                       Width="Auto">
                 <e:Interaction.Behaviors>
-                    <TaskManager:BindableSelectedItemBehavior SelectedItem="{Binding SelectedTask, Mode=TwoWay}" />
+                    <TaskManager:TreeViewSelectedItem SelectedItem="{Binding SelectedTask, Mode=TwoWay}" />
                 </e:Interaction.Behaviors>
                 <TreeView.ItemContainerStyle>
                 <!-- This Style binds a TreeViewItem to a TaskManagerViewModel. -->
@@ -144,7 +144,7 @@
             <!--Registration date and complete date-->
         <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal">
             <Label Content="{x:Static res:Resources.RegistrationDate}"></Label>
-            <DatePicker SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+            <DatePicker SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" IsEnabled="False"/>
             <Label Content="{x:Static res:Resources.CompleteDate}"></Label>
             <DatePicker SelectedDate="{Binding CompletionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
