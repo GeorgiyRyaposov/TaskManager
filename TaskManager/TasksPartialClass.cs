@@ -98,7 +98,6 @@ namespace TaskManager
             }
         }
         
-
         //Count sum of all child planned runtime tasks
         private int CountPlannedRunTimeSum(EntityCollection<Tasks> childrenTasks)
         {

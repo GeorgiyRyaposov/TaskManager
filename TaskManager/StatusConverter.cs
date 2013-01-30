@@ -19,15 +19,15 @@ namespace TaskManager
         {   
             if (value != null)
             {
-                switch ((StatusEnum)value)
+                switch ((short)value)
                 {
-                    case StatusEnum.Assigned:
+                    case (short)StatusEnum.Assigned:
                         return new SolidColorBrush(Colors.DeepSkyBlue);
-                    case StatusEnum.InProgress:
+                    case (short)StatusEnum.InProgress:
                         return new SolidColorBrush(Colors.Yellow);
-                    case StatusEnum.Stopped:
+                    case (short)StatusEnum.Stopped:
                         return new SolidColorBrush(Colors.Gray);
-                    case StatusEnum.Complete:
+                    case (short)StatusEnum.Complete:
                         return new SolidColorBrush(Colors.LimeGreen);
                     default:
                         return new SolidColorBrush(Colors.Black);
